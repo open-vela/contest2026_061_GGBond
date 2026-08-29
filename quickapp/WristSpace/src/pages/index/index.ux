@@ -1,0 +1,4874 @@
+﻿<template>
+  <div class="page" onswipe="handleSwipe">
+    <div class="home" if="{{homeVisible}}">
+      <div class="hero">
+        <div class="clock-row">
+          <div class="clock-left">
+            <text class="clock-time">{{currentTimeText}}</text>
+          </div>
+          <div class="clock-brand">
+            <text class="clock-brand-text">OPENVELA AIOT</text>
+          </div>
+          <div class="clock-right">
+            <text class="clock-date">{{clockMetaText}}</text>
+            <div class="clock-sync">
+              <text class="clock-sync-dot">●</text>
+              <text class="clock-sync-text">{{clockSourceText}}</text>
+            </div>
+          </div>
+        </div>
+        <text class="title">腕控空间</text>
+        <text class="subtitle">肌电 + 九轴融合识别</text>
+      </div>
+
+      <div class="status-card" onclick="reconnectPc">
+        <div class="status-head">
+          <text class="status-label">系统状态 · {{operationModeText}}</text>
+          <text class="status-badge">{{connectionBadge}}</text>
+        </div>
+        <text class="status-main">{{connectionText}}</text>
+        <div class="current-line">
+          <text class="current-name">{{currentDeviceName}}</text>
+          <text class="current-state">{{currentStatusText}} · {{currentValueText}}</text>
+        </div>
+        <text class="status-command">{{commandText}} · {{confidenceText}} · {{syncSeqText}}</text>
+      </div>
+
+      <div class="menu-row">
+        <div class="menu-btn primary" onclick="openLearning">
+          <text class="menu-title">AI 学习</text>
+          <text class="menu-sub">{{learningStateText}}</text>
+        </div>
+        <div class="menu-btn green last" onclick="openDevices">
+          <text class="menu-title">设备中心</text>
+          <text class="menu-sub">{{deviceCountText}}</text>
+        </div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-btn orange" onclick="openStatus">
+          <text class="menu-title">状态总览</text>
+          <text class="menu-sub">{{sceneName}}</text>
+        </div>
+        <div class="menu-btn purple last" onclick="openAbout">
+          <text class="menu-title">运行信息</text>
+          <text class="menu-sub">{{modelCountText}}</text>
+        </div>
+      </div>
+      <div class="decision-strip" onclick="openCopilot">
+        <div class="decision-strip-left">
+          <text class="decision-strip-kicker">AI DECISION LOOP</text>
+          <text class="decision-strip-title">可解释决策舱</text>
+        </div>
+        <div class="decision-strip-right">
+          <text class="decision-strip-stage">{{intentStageText}}</text>
+          <text class="decision-strip-arrow">›</text>
+        </div>
+      </div>
+      <div class="page-grow"></div>
+      <div class="gesture-dock">
+        <div class="dock-head">
+          <text class="dock-title">腕部操作地图</text>
+          <text class="dock-link" onclick="openDevices">查看设备</text>
+        </div>
+        <div class="dock-step-row">
+          <div class="dock-step" onclick="quickPointNext">
+            <text class="dock-step-title">抬腕</text>
+            <text class="dock-step-sub">切换候选</text>
+          </div>
+          <div class="dock-step dock-step-middle" onclick="quickPowerToggle">
+            <text class="dock-step-title">上 / 下摆</text>
+            <text class="dock-step-sub">启停设备</text>
+          </div>
+          <div class="dock-step dock-step-last" onclick="quickAdjust">
+            <text class="dock-step-title">转腕</text>
+            <text class="dock-step-sub">连续调节</text>
+          </div>
+        </div>
+        <text class="dock-status">{{currentDeviceName}} · {{currentStatusText}} · {{currentValueText}}</text>
+      </div>
+    </div>
+
+    <div class="sub-page copilot-page" if="{{copilotVisible}}">
+      <div class="safe-header compact-header">
+        <text class="page-kicker">AI DECISION LOOP</text>
+        <text class="page-title">可解释决策舱</text>
+      </div>
+      <div class="copilot-hero-card">
+        <div class="copilot-hero-head">
+          <text class="copilot-hero-label">当前意图</text>
+          <text class="copilot-hero-confidence">{{confidenceText}}</text>
+        </div>
+        <text class="copilot-hero-main">{{decisionIntentText}}</text>
+        <text class="copilot-hero-sub">{{currentDeviceName}} · {{currentDeviceZone}} · {{currentStatusText}} / {{currentValueText}}</text>
+        <text class="copilot-hero-evidence">{{lastEvidenceText}}</text>
+      </div>
+      <div class="copilot-flow-card">
+        <text class="copilot-flow-title">识别证据链</text>
+        <div class="copilot-flow-row">
+          <div class="copilot-flow-step {{decisionSpaceClass}}">
+            <text class="copilot-flow-index">01</text>
+            <text class="copilot-flow-name">空间锁定</text>
+            <text class="copilot-flow-value">{{decisionSpaceText}}</text>
+          </div>
+          <text class="copilot-flow-arrow">›</text>
+          <div class="copilot-flow-step {{decisionFeatureClass}}">
+            <text class="copilot-flow-index">02</text>
+            <text class="copilot-flow-name">特征融合</text>
+            <text class="copilot-flow-value">{{decisionFeatureText}}</text>
+          </div>
+          <text class="copilot-flow-arrow">›</text>
+          <div class="copilot-flow-step {{decisionSafetyClass}}">
+            <text class="copilot-flow-index">03</text>
+            <text class="copilot-flow-name">安全判定</text>
+            <text class="copilot-flow-value">{{decisionSafetyText}}</text>
+          </div>
+          <text class="copilot-flow-arrow">›</text>
+          <div class="copilot-flow-step {{decisionExecuteClass}}">
+            <text class="copilot-flow-index">04</text>
+            <text class="copilot-flow-name">设备执行</text>
+            <text class="copilot-flow-value">{{decisionExecuteText}}</text>
+          </div>
+        </div>
+      </div>
+      <div class="copilot-metric-row">
+        <div class="copilot-metric">
+          <text class="copilot-metric-label">融合输入</text>
+          <text class="copilot-metric-value">{{sensorLinkText}}</text>
+        </div>
+        <div class="copilot-metric copilot-metric-last">
+          <text class="copilot-metric-label">安全门控</text>
+          <text class="copilot-metric-value">{{safetyGuardStateShort}} / {{safetyThreshold}}%</text>
+        </div>
+      </div>
+      <div class="copilot-note-card">
+        <text class="copilot-note-title">为什么执行</text>
+        <text class="copilot-note-text">{{decisionExplainText}}</text>
+      </div>
+      <div class="action-row compact-row">
+        <div class="action-btn scene decision-action" onclick="runContestDemo">
+          <text class="action-title decision-action-title">一键闭环演示</text>
+          <text class="action-sub decision-action-sub">空间 → AI → 执行</text>
+        </div>
+        <div class="action-btn cyan last decision-action" onclick="requestSyncModels">
+          <text class="action-title decision-action-title">同步识别模型</text>
+          <text class="action-sub decision-action-sub">更新证据链</text>
+        </div>
+      </div>
+      <div class="wide-btn decision-wide-btn" onclick="toggleSafetyGuard">
+        <text class="wide-text decision-wide-text">门控 {{safetyGuardStateShort}} / {{safetyThreshold}}% · 点击切换保护策略</text>
+      </div>
+      <text class="copilot-bottom-tip">{{copilotHintText}} · PC Mock / EMG+IMU 入口 · {{syncSeqText}}</text>
+    </div>
+
+    <div class="sub-page" if="{{learningVisible}}">
+      <div class="safe-header">
+        <text class="page-kicker">AI LEARNING</text>
+        <text class="page-title">个性化动作学习</text>
+      </div>
+      <div class="learning-card">
+        <text class="learning-main">{{currentDeviceName}} · {{trainingActionName}}</text>
+        <text class="learning-line">采集进度：{{trainingSamplesText}}</text>
+        <text class="learning-line">{{modelStatusText}}</text>
+        <text class="learning-line">{{trainingHintText}}</text>
+        <text class="ranking-text">{{rankingText}} · {{confidenceText}} · {{sensorLinkText}}</text>
+      </div>
+      <div class="ai-showcase-card">
+        <text class="ai-showcase-title">AI 能力展示</text>
+        <div class="ai-showcase-row">
+          <div class="ai-showcase-cell">
+            <text class="ai-showcase-label">模型</text>
+            <text class="ai-showcase-value">{{modelCountText}}</text>
+          </div>
+          <div class="ai-showcase-cell ai-showcase-cell-last">
+            <text class="ai-showcase-label">Top 候选</text>
+            <text class="ai-showcase-value">{{rankingShortText}}</text>
+          </div>
+        </div>
+        <div class="ai-showcase-row">
+          <div class="ai-showcase-cell">
+            <text class="ai-showcase-label">置信度</text>
+            <text class="ai-showcase-value">{{confidenceText}}</text>
+          </div>
+          <div class="ai-showcase-cell ai-showcase-cell-last">
+            <text class="ai-showcase-label">门控</text>
+            <text class="ai-showcase-value">{{safetyGuardStateShort}} / {{safetyThreshold}}%</text>
+          </div>
+        </div>
+      </div>
+      <div class="action-row">
+        <div class="action-btn scene" onclick="selectNextTrainingAction">
+          <text class="action-title">选择动作</text>
+          <text class="action-sub">{{trainingActionShort}}</text>
+        </div>
+        <div class="action-btn cyan last" onclick="requestCapture">
+          <text class="action-title">采集样本</text>
+          <text class="action-sub">{{trainingSamplesText}}</text>
+        </div>
+      </div>
+      <div class="action-row">
+        <div class="action-btn green" onclick="requestTrain">
+          <text class="action-title">训练模型</text>
+          <text class="action-sub">{{modelButtonText}}</text>
+        </div>
+        <div class="action-btn primary last" onclick="requestInfer">
+          <text class="action-title">AI 识别</text>
+          <text class="action-sub">{{inferenceButtonText}}</text>
+        </div>
+      </div>
+      <div class="wide-btn" onclick="requestSyncModels">
+        <text class="wide-text">同步设备 / 动作 / 模型</text>
+      </div>
+      <div class="page-grow"></div>
+      <div class="learning-dock">
+        <text class="learning-dock-title">训练闭环</text>
+        <div class="learning-step-row">
+          <text class="learning-step">1 绑定</text>
+          <text class="learning-arrow">›</text>
+          <text class="learning-step learning-step-active">2 {{trainingSamplesText}}</text>
+          <text class="learning-arrow">›</text>
+          <text class="learning-step">3 训练</text>
+          <text class="learning-arrow">›</text>
+          <text class="learning-step">4 识别</text>
+        </div>
+        <text class="learning-dock-tip">{{operationModeText}} · {{safetyGuardText}}</text>
+      </div>
+      <text class="back-tip">右滑返回主页 · {{clockSourceText}} · {{syncSeqText}}</text>
+    </div>
+
+    <div class="sub-page" if="{{devicesVisible}}">
+      <div class="safe-header">
+        <text class="page-kicker">DEVICE CENTER</text>
+        <text class="page-title">空间候选设备</text>
+      </div>
+      <div class="orbit-stage">
+        <div class="selected-device-card">
+          <text class="zone-pill">{{currentDeviceZone}} · 当前选中</text>
+          <text class="device-name">{{currentDeviceName}}</text>
+          <text class="device-state">{{currentStatusText}} · {{currentValueText}}</text>
+          <text class="device-action">动作：{{currentActionName}}</text>
+        </div>
+        <div class="orbit-row">
+          <div class="orbit-card side-left" onclick="previousDevice">
+            <text class="orbit-name">上一 {{previousDeviceName}}</text>
+          </div>
+          <div class="orbit-card side-mid" onclick="nextDevice">
+            <text class="orbit-name">候选 {{nextDeviceName}}</text>
+          </div>
+          <div class="orbit-card side-right" onclick="nextDevice">
+            <text class="orbit-name">下一 {{thirdDeviceName}}</text>
+          </div>
+        </div>
+        <text class="orbit-hint">{{devicePositionText}} · 抬腕指向切换候选</text>
+      </div>
+      <div class="info-strip">
+        <text class="info-strip-main">{{currentActionCountText}}</text>
+        <text class="info-strip-sub">{{currentDeviceName}} · {{currentStatusText}} · {{currentValueText}}</text>
+      </div>
+      <div class="action-row compact-row device-action-row">
+        <div class="action-btn green device-action-btn" onclick="openManage">
+          <text class="action-title device-action-title">本地管理</text>
+          <text class="action-sub device-action-sub">增删设备与动作</text>
+        </div>
+        <div class="action-btn cyan last device-action-btn" onclick="requestSyncModels">
+          <text class="action-title device-action-title">从 PC 刷新</text>
+          <text class="action-sub device-action-sub">同步最新配置</text>
+        </div>
+      </div>
+      <div class="page-grow"></div>
+      <div class="device-dock" onclick="openManage">
+        <div class="dock-head">
+          <text class="dock-title">当前控制链路</text>
+          <text class="dock-link">{{bindingProgressText}}</text>
+        </div>
+        <text class="device-dock-main">空间指向 → 动作识别 → 指令绑定 → 设备执行</text>
+        <text class="device-dock-sub">{{sensorLinkText}} · {{confidenceText}} · {{syncSeqText}}</text>
+      </div>
+      <text class="device-bottom-tip">右滑返回主页 · PC 同步 {{syncSeqText}}</text>
+    </div>
+
+    <div class="sub-page" if="{{manageVisible}}">
+      <div class="safe-header compact-header">
+        <text class="page-kicker">LOCAL MANAGER</text>
+        <text class="page-title">设备管理</text>
+      </div>
+      <div class="manage-current manage-current-compact">
+        <text class="manage-name">{{currentDeviceName}}</text>
+        <text class="manage-meta">{{currentDeviceZone}} · {{currentStatusText}} / {{currentValueText}}</text>
+        <text class="manage-action">{{currentActionCountText}} · {{currentActionName}}</text>
+      </div>
+      <div class="manage-message compact-message">
+        <text class="manage-message-main">{{managementMessage}}</text>
+        <text class="manage-message-sub">{{managementSubMessage}}</text>
+      </div>
+      <div class="action-row compact-row">
+        <div class="action-btn manual-main" onclick="openManualDeviceInput">
+          <text class="action-title">手动添加</text>
+          <text class="action-sub">键盘输入设备</text>
+        </div>
+        <div class="action-btn cyan last" onclick="localAddDevice">
+          <text class="action-title">模板添加</text>
+          <text class="action-sub">常见设备</text>
+        </div>
+      </div>
+      <div class="manual-preview compact-preview" onclick="openManualDeviceInput">
+        <text class="manual-preview-title">待添加：{{manualDeviceName}}</text>
+        <text class="manual-preview-line">{{manualDeviceType}} · {{manualDeviceZone}}</text>
+      </div>
+      <div class="action-row compact-row">
+        <div class="action-btn primary" onclick="openActionConfig">
+          <text class="action-title">配置动作</text>
+          <text class="action-sub">开启/关闭/调节</text>
+        </div>
+        <div class="action-btn green last" onclick="openLearning">
+          <text class="action-title">AI 学习</text>
+          <text class="action-sub">10 组样本训练</text>
+        </div>
+      </div>
+      <div class="danger-strip">
+        <div class="danger-chip" onclick="localDeleteDevice"><text class="danger-chip-text">删除设备</text></div>
+        <div class="danger-chip danger-chip-last" onclick="localDeleteAction"><text class="danger-chip-text">删除动作</text></div>
+      </div>
+      <text class="back-tip">右滑返回设备中心 · 配置自动同步 PC · {{syncSeqText}}</text>
+    </div>
+
+    <div class="sub-page" if="{{actionConfigVisible}}">
+      <div class="safe-header compact-header">
+        <text class="page-kicker">COMMAND SETUP</text>
+        <text class="page-title">指令配置</text>
+      </div>
+      <div class="action-focus-card">
+        <text class="action-focus-name">{{currentDeviceName}}</text>
+        <text class="action-focus-meta">{{currentDeviceZone}} · {{currentDeviceTypeText}}</text>
+        <text class="action-focus-status">{{actionConfigMessage}}</text>
+      </div>
+      <div class="action-guide-card">
+        <text class="action-guide-main">{{bindingProgressText}}</text>
+        <text class="action-guide-sub">{{bindingWarningText}}</text>
+      </div>
+      <div class="action-row compact-row">
+        <div class="action-btn green" onclick="addOpenAction">
+          <text class="action-title">开启指令</text>
+          <text class="action-sub">{{bindingOpenText}}</text>
+        </div>
+        <div class="action-btn danger last" onclick="addCloseAction">
+          <text class="action-title">关闭指令</text>
+          <text class="action-sub">{{bindingCloseText}}</text>
+        </div>
+      </div>
+      <div class="action-row compact-row">
+        <div class="action-btn cyan" onclick="addIncreaseAction">
+          <text class="action-title">调高指令</text>
+          <text class="action-sub">{{bindingUpText}}</text>
+        </div>
+        <div class="action-btn purple last" onclick="addDecreaseAction">
+          <text class="action-title">调低指令</text>
+          <text class="action-sub">{{bindingDownText}}</text>
+        </div>
+      </div>
+      <div class="action-row compact-row">
+        <div class="action-btn scene" onclick="addCustomAction">
+          <text class="action-title">自定义指令</text>
+          <text class="action-sub">{{bindingCustomText}}</text>
+        </div>
+        <div class="action-btn primary last" onclick="finishActionConfig">
+          <text class="action-title">完成配置</text>
+          <text class="action-sub">同步到 PC</text>
+        </div>
+      </div>
+      <text class="back-tip">右滑返回设备管理 · {{syncSeqText}}</text>
+    </div>
+
+    <div class="sub-page" if="{{actionTrainVisible}}">
+      <div class="safe-header compact-header">
+        <text class="page-kicker">BIND ACTION</text>
+        <text class="page-title">绑定动作</text>
+      </div>
+      <div class="train-focus-card">
+        <text class="train-device-name">{{currentDeviceName}}</text>
+        <text class="train-action-name">{{selectedCommandTitle}}</text>
+        <text class="train-action-command">当前绑定：{{selectedTriggerName}}</text>
+      </div>
+      <div class="action-guide-card">
+        <text class="action-guide-main">选择触发这个指令的动作</text>
+        <text class="action-guide-sub">默认动作可直接绑定，自定义动作进入采集训练</text>
+      </div>
+      <div class="action-row compact-row">
+        <div class="action-btn green" onclick="bindTriggerSwingUp">
+          <text class="action-title">上摆</text>
+          <text class="action-sub">默认动作</text>
+        </div>
+        <div class="action-btn danger last" onclick="bindTriggerSwingDown">
+          <text class="action-title">下摆</text>
+          <text class="action-sub">默认动作</text>
+        </div>
+      </div>
+      <div class="action-row compact-row">
+        <div class="action-btn cyan" onclick="bindTriggerRotateCw">
+          <text class="action-title">顺时针</text>
+          <text class="action-sub">默认动作</text>
+        </div>
+        <div class="action-btn purple last" onclick="bindTriggerRotateCcw">
+          <text class="action-title">逆时针</text>
+          <text class="action-sub">默认动作</text>
+        </div>
+      </div>
+      <div class="action-row compact-row">
+        <div class="action-btn scene" onclick="openCustomTriggerTraining">
+          <text class="action-title">自定义动作</text>
+          <text class="action-sub">采集训练</text>
+        </div>
+        <div class="action-btn primary last" onclick="finishActionBinding">
+          <text class="action-title">完成绑定</text>
+          <text class="action-sub">返回指令</text>
+        </div>
+      </div>
+      <div class="subtle-wide-btn" onclick="clearSelectedCommandBinding">
+        <text class="subtle-wide-text">解除当前指令绑定</text>
+      </div>
+      <text class="back-tip">右滑返回指令配置 · {{syncSeqText}}</text>
+    </div>
+
+    <div class="sub-page" if="{{customTrainVisible}}">
+      <div class="safe-header compact-header">
+        <text class="page-kicker">CUSTOM TRAIN</text>
+        <text class="page-title">自定义训练</text>
+      </div>
+      <div class="train-focus-card">
+        <text class="train-device-name">{{currentDeviceName}}</text>
+        <text class="train-action-name">{{selectedCommandTitle}}</text>
+        <text class="train-action-command">{{selectedActionFlowCommand}}</text>
+      </div>
+      <div class="train-progress-card">
+        <text class="train-progress-main">{{trainingSamplesText}} · {{learningStateText}}</text>
+        <text class="train-progress-sub">{{modelStatusText}}</text>
+        <text class="train-progress-hint">{{trainingHintText}}</text>
+      </div>
+      <div class="action-row compact-row">
+        <div class="action-btn cyan" onclick="requestCapture">
+          <text class="action-title">采集样本</text>
+          <text class="action-sub">PC 输入 10 组</text>
+        </div>
+        <div class="action-btn green last" onclick="requestTrain">
+          <text class="action-title">训练模型</text>
+          <text class="action-sub">{{modelButtonText}}</text>
+        </div>
+      </div>
+      <div class="action-row compact-row">
+        <div class="action-btn primary" onclick="requestInfer">
+          <text class="action-title">AI 识别</text>
+          <text class="action-sub">{{inferenceButtonText}}</text>
+        </div>
+        <div class="action-btn scene last" onclick="finishCustomTraining">
+          <text class="action-title">完成训练</text>
+          <text class="action-sub">绑定自定义</text>
+        </div>
+      </div>
+      <div class="train-ranking-card">
+        <text class="train-ranking-text">{{rankingText}}</text>
+      </div>
+      <text class="back-tip">右滑返回动作绑定 · {{syncSeqText}}</text>
+    </div>
+
+    <div class="sub-page" if="{{manualInputVisible}}">
+      <div class="safe-header compact-header">
+        <text class="page-kicker">DEVICE INPUT</text>
+        <text class="page-title">手动添加设备</text>
+      </div>
+      <div class="input-card" onclick="focusManualInput">
+        <text class="input-title">{{manualInputLabel}}</text>
+        <text class="input-value">{{manualInputValue}}{{manualCursorText}}</text>
+        <text class="input-hint">{{manualInputHint}}</text>
+      </div>
+      <div class="ime-compose">
+        <text class="ime-label">拼音</text>
+        <text class="ime-buffer">{{imeBufferText}}</text>
+      </div>
+      <div class="candidate-row">
+        <div class="candidate-chip candidate-arrow" onclick="prevCandidatePage"><text class="candidate-arrow-text">‹</text></div>
+        <div class="candidate-chip candidate-word" onclick="chooseCandidateOne"><text class="candidate-text">{{candidateText1}}</text></div>
+        <div class="candidate-chip candidate-word" onclick="chooseCandidateTwo"><text class="candidate-text">{{candidateText2}}</text></div>
+        <div class="candidate-chip candidate-word" onclick="chooseCandidateThree"><text class="candidate-text">{{candidateText3}}</text></div>
+        <div class="candidate-chip candidate-arrow last-key" onclick="nextCandidatePage"><text class="candidate-arrow-text">›</text></div>
+      </div>
+      <div class="qwerty-row">
+        <div class="qkey qkey-row1" onclick="qKeyQ"><text class="qkey-text">Q</text></div>
+        <div class="qkey qkey-row1" onclick="qKeyW"><text class="qkey-text">W</text></div>
+        <div class="qkey qkey-row1" onclick="qKeyE"><text class="qkey-text">E</text></div>
+        <div class="qkey qkey-row1" onclick="qKeyR"><text class="qkey-text">R</text></div>
+        <div class="qkey qkey-row1" onclick="qKeyT"><text class="qkey-text">T</text></div>
+        <div class="qkey qkey-row1" onclick="qKeyY"><text class="qkey-text">Y</text></div>
+        <div class="qkey qkey-row1" onclick="qKeyU"><text class="qkey-text">U</text></div>
+        <div class="qkey qkey-row1" onclick="qKeyI"><text class="qkey-text">I</text></div>
+        <div class="qkey qkey-row1" onclick="qKeyO"><text class="qkey-text">O</text></div>
+        <div class="qkey qkey-row1 last-key" onclick="qKeyP"><text class="qkey-text">P</text></div>
+      </div>
+      <div class="qwerty-row qwerty-row-mid">
+        <div class="qkey qkey-row2" onclick="qKeyA"><text class="qkey-text">A</text></div>
+        <div class="qkey qkey-row2" onclick="qKeyS"><text class="qkey-text">S</text></div>
+        <div class="qkey qkey-row2" onclick="qKeyD"><text class="qkey-text">D</text></div>
+        <div class="qkey qkey-row2" onclick="qKeyF"><text class="qkey-text">F</text></div>
+        <div class="qkey qkey-row2" onclick="qKeyG"><text class="qkey-text">G</text></div>
+        <div class="qkey qkey-row2" onclick="qKeyH"><text class="qkey-text">H</text></div>
+        <div class="qkey qkey-row2" onclick="qKeyJ"><text class="qkey-text">J</text></div>
+        <div class="qkey qkey-row2" onclick="qKeyK"><text class="qkey-text">K</text></div>
+        <div class="qkey qkey-row2 last-key" onclick="qKeyL"><text class="qkey-text">L</text></div>
+      </div>
+      <div class="qwerty-row qwerty-row-last">
+        <div class="qkey qkey-row3" onclick="qKeyZ"><text class="qkey-text">Z</text></div>
+        <div class="qkey qkey-row3" onclick="qKeyX"><text class="qkey-text">X</text></div>
+        <div class="qkey qkey-row3" onclick="qKeyC"><text class="qkey-text">C</text></div>
+        <div class="qkey qkey-row3" onclick="qKeyV"><text class="qkey-text">V</text></div>
+        <div class="qkey qkey-row3" onclick="qKeyB"><text class="qkey-text">B</text></div>
+        <div class="qkey qkey-row3" onclick="qKeyN"><text class="qkey-text">N</text></div>
+        <div class="qkey qkey-row3" onclick="qKeyM"><text class="qkey-text">M</text></div>
+        <div class="qkey qkey-back last-key" onclick="keyBack"><text class="qkey-text">退格</text></div>
+      </div>
+      <div class="qwerty-action-row">
+        <div class="qkey qkey-clear" onclick="keyClearInput"><text class="qkey-text">清空</text></div>
+        <div class="qkey qkey-space" onclick="qKeySpace"><text class="qkey-text">空格 / 选词</text></div>
+        <div class="qkey qkey-next" onclick="manualNextField"><text class="qkey-text">下一项</text></div>
+        <div class="qkey qkey-done last-key" onclick="saveManualDevice"><text class="qkey-text">完成</text></div>
+      </div>
+      <text class="back-tip">右滑返回本地管理 · {{syncSeqText}}</text>
+    </div>
+
+    <div class="sub-page" if="{{statusVisible}}">
+      <div class="safe-header">
+        <text class="page-kicker">STATUS</text>
+        <text class="page-title">设备运行状态</text>
+      </div>
+      <div class="metric-row">
+        <div class="metric-card">
+          <text class="metric-name">灯光</text>
+          <text class="metric-value">{{lightStateText}}</text>
+          <text class="metric-extra">{{lightLevel}}%</text>
+        </div>
+        <div class="metric-card last">
+          <text class="metric-name">空调</text>
+          <text class="metric-value">{{acStateText}}</text>
+          <text class="metric-extra">{{temperature}}℃</text>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-card">
+          <text class="metric-name">窗帘</text>
+          <text class="metric-value">{{curtainStateText}}</text>
+          <text class="metric-extra">{{sceneName}}</text>
+        </div>
+        <div class="metric-card last">
+          <text class="metric-name">音箱</text>
+          <text class="metric-value">{{speakerStateText}}</text>
+          <text class="metric-extra">{{volume}}%</text>
+        </div>
+      </div>
+      <div class="info-card">
+        <text class="info-main">当前候选：{{currentDeviceName}}</text>
+        <text class="info-sub">{{currentDeviceZone}} · {{currentStatusText}} · {{currentValueText}}</text>
+        <text class="info-sub">最近指令：{{commandText}}</text>
+      </div>
+      <div class="page-grow"></div>
+      <div class="status-dock" onclick="openAbout">
+        <div class="status-dock-cell">
+          <text class="status-dock-label">当前场景</text>
+          <text class="status-dock-value">{{sceneName}}</text>
+        </div>
+        <div class="status-dock-cell">
+          <text class="status-dock-label">运行模式</text>
+          <text class="status-dock-value">{{operationModeText}}</text>
+        </div>
+        <div class="status-dock-cell status-dock-last">
+          <text class="status-dock-label">误触保护</text>
+          <text class="status-dock-value">{{safetyGuardStateShort}}</text>
+        </div>
+      </div>
+      <text class="back-tip">右滑返回主页 · {{clockSourceText}} · {{syncSeqText}}</text>
+    </div>
+
+    <div class="sub-page" if="{{aboutVisible}}">
+      <div class="safe-header">
+        <text class="page-kicker">RUNTIME</text>
+        <text class="page-title">多模态运行信息</text>
+      </div>
+      <div class="info-card runtime-card">
+        <text class="info-main">{{connectionText}}</text>
+        <text class="info-sub">运行模式：{{operationModeText}} · {{modeDetailText}}</text>
+        <text class="info-sub">协议：space-aiot.multimodal-window.v1</text>
+        <text class="info-sub">设备：{{deviceCountText}} · 动作：{{actionCountText}}</text>
+        <text class="info-sub">模型：{{modelCountText}}</text>
+        <text class="info-sub">最近事件：{{commandText}}</text>
+      </div>
+      <div class="runtime-safety-card">
+        <text class="runtime-safety-title">{{safetyGuardText}}</text>
+        <text class="runtime-safety-detail">{{safetyGuardDetail}}</text>
+      </div>
+      <div class="action-row compact-row">
+        <div class="runtime-action-btn scene" onclick="toggleSafetyGuard">
+          <text class="runtime-action-title">切换门控</text>
+          <text class="runtime-action-sub">{{safetyGuardButtonText}}</text>
+        </div>
+        <div class="runtime-action-btn cyan last" onclick="openDevices">
+          <text class="runtime-action-title">查看设备</text>
+          <text class="runtime-action-sub">确认当前状态</text>
+        </div>
+      </div>
+      <div class="wide-btn" onclick="reconnectPc">
+        <text class="wide-text">同步时间与状态 · {{clockSourceText}}</text>
+      </div>
+      <text class="back-tip">右滑返回主页 · {{clockSourceText}} · {{syncSeqText}}</text>
+    </div>
+  </div>
+</template>
+
+<script>
+import fetch from '@system.fetch'
+
+export default {
+  private: {
+    homeVisible: true,
+    copilotVisible: false,
+    learningVisible: false,
+    devicesVisible: false,
+    manageVisible: false,
+    manualInputVisible: false,
+    actionConfigVisible: false,
+    actionTrainVisible: false,
+    customTrainVisible: false,
+    statusVisible: false,
+    aboutVisible: false,
+    pcUrl: 'http://10.0.2.2:8787/aiot-command',
+    pcUrls: [
+      'http://10.0.2.2:8787/aiot-command',
+      'http://127.0.0.1:8787/aiot-command'
+    ],
+    pcUrlIndex: 0,
+    pcRetryTimer: null,
+    pcRequestTimer: null,
+    pcRequestToken: 0,
+    pcPolling: false,
+    pcBusy: false,
+    pcFailCount: 0,
+    quickCommandAt: 0,
+    multimodalRequestAt: 0,
+    lastSeq: 0,
+    lastEventId: '',
+    configVersion: 1,
+    connectionBadge: 'WAIT',
+    connectionText: 'PC 连接检测中',
+    commandText: '等待命令',
+    managementMessage: '可在手表端直接管理配置',
+    managementSubMessage: '操作后自动同步到 PC 上位机',
+    actionConfigMessage: '请为当前设备添加动作',
+    manualFieldIndex: 0,
+    manualInputLabel: '设备名称',
+    manualInputValue: '输入设备名称',
+    manualInputHint: '可点快捷词，也可用键盘输入字母数字',
+    manualInputFocused: false,
+    manualCursorVisible: true,
+    manualCursorText: ' ',
+    manualCursorTimer: null,
+    manualDeviceName: '手机',
+    manualDeviceType: 'phone',
+    manualDeviceZone: '随身',
+    manualImeBuffer: '',
+    imeBufferText: '输入拼音',
+    candidateText1: '手机',
+    candidateText2: '冰箱',
+    candidateText3: '摄像头',
+    candidateText4: '电视',
+    pcImeCandidates: [],
+    pcImeRequestKey: '',
+    pcImeRequestToken: 0,
+    candidatePageIndex: 0,
+    devices: [
+      { id: 'light', name: '客厅灯', type: 'light', zone: '正前方' },
+      { id: 'ac', name: '空调', type: 'ac', zone: '右前方' },
+      { id: 'curtain', name: '窗帘', type: 'curtain', zone: '左前方' },
+      { id: 'speaker', name: '音箱', type: 'speaker', zone: '右侧' }
+    ],
+    deviceTemplates: [
+      { id: 'fridge', name: '冰箱', type: 'fridge', zone: '厨房' },
+      { id: 'tv', name: '电视', type: 'tv', zone: '正前方' },
+      { id: 'fan', name: '风扇', type: 'fan', zone: '左侧' },
+      { id: 'cleaner', name: '扫地机器人', type: 'cleaner', zone: '地面' },
+      { id: 'purifier', name: '空气净化器', type: 'purifier', zone: '右侧' },
+      { id: 'phone', name: '手机', type: 'phone', zone: '随身' }
+    ],
+    actions: [],
+    models: [],
+    runtimeStates: [
+      { id: 'light', state: '关闭', value: '0%' },
+      { id: 'ac', state: '关闭', value: '关闭' },
+      { id: 'curtain', state: '关闭', value: '日常' },
+      { id: 'speaker', state: '静音', value: '0%' }
+    ],
+    deviceIndex: 0,
+    currentDeviceId: 'light',
+    currentDeviceName: '客厅灯',
+    currentDeviceZone: '正前方',
+    currentDeviceTypeText: 'light',
+    currentTimeText: '00:00',
+    clockMetaText: '1月1日 · 周一',
+    clockSourceText: '本地时钟',
+    confidenceText: '等待数据',
+    sensorLinkText: 'IMU + EMG',
+    syncSeqText: '#0',
+    clockTimer: null,
+    clockOffsetMs: 0,
+    clockZoneOffsetMinutes: 0,
+    clockSynced: false,
+    previousDeviceName: '音箱',
+    nextDeviceName: '空调',
+    thirdDeviceName: '窗帘',
+    devicePositionText: '1 / 4',
+    deviceCountText: '4 台设备',
+    actionCountText: '0 个动作',
+    modelCountText: '0 个模型',
+    currentActionName: '尚未配置动作',
+    currentActionCountText: '0 个专属动作',
+    bindingProgressText: '0/4 指令已绑定',
+    bindingWarningText: '未绑定指令可继续配置',
+    bindingOpenText: '未绑定',
+    bindingCloseText: '未绑定',
+    bindingUpText: '未绑定',
+    bindingDownText: '未绑定',
+    bindingCustomText: '可添加训练动作',
+    lightStateText: '关闭',
+    lightLevel: 0,
+    acStateText: '关闭',
+    temperature: 26,
+    curtainStateText: '关闭',
+    speakerStateText: '静音',
+    volume: 0,
+    currentStatusText: '关闭',
+    currentValueText: '0%',
+    sceneIndex: 0,
+    sceneName: '日常',
+    trainingActionIndex: 0,
+    trainingActionId: '',
+    trainingActionName: '请先配置动作',
+    trainingActionShort: '无动作',
+    trainingSamplesText: '0/10',
+    modelStatusText: '模型：待采集',
+    trainingHintText: '在 PC 端输入一组完整动作数据',
+    rankingText: '候选模型：等待识别',
+    rankingShortText: '等待识别',
+    learningStateText: '待训练',
+    modelButtonText: '样本不足',
+    inferenceButtonText: '模型未就绪',
+    operationMode: 'demo',
+    operationModeText: '演示模式',
+    modeDetailText: 'PC Mock 联调',
+    safetyGuardEnabled: true,
+    safetyThreshold: 80,
+    safetyGuardText: '安全门控：已开启',
+    safetyGuardDetail: '低于 80% 置信度的设备控制会被拦截',
+    safetyGuardButtonText: '当前开启',
+    safetyGuardStateShort: '开启',
+    intentStageText: '等待输入',
+    decisionIntentText: '等待空间指向或微手势',
+    decisionSpaceText: '未锁定',
+    decisionFeatureText: '待采集',
+    decisionSafetyText: '待判定',
+    decisionExecuteText: '待执行',
+    decisionSpaceClass: 'copilot-step-idle',
+    decisionFeatureClass: 'copilot-step-idle',
+    decisionSafetyClass: 'copilot-step-idle',
+    decisionExecuteClass: 'copilot-step-idle',
+    decisionExplainText: '等待输入后，系统会展示目标设备、动作证据、置信度和安全门控结果。',
+    lastEvidenceText: '证据：尚未接收到新的动作数据',
+    copilotHintText: 'AI 决策舱已就绪'
+  },
+
+  onInit() {
+    this.syncCurrentDevice()
+    this.startClock()
+    this.pcPolling = true
+    this.pollPc()
+  },
+
+  onShow() {
+    if (!this.pcPolling) {
+      this.pcPolling = true
+      this.pollPc()
+    }
+  },
+
+  onDestroy() {
+    this.pcPolling = false
+    this.pcBusy = false
+    if (this.pcRetryTimer && typeof clearTimeout === 'function') {
+      clearTimeout(this.pcRetryTimer)
+    }
+    if (this.pcRequestTimer && typeof clearTimeout === 'function') {
+      clearTimeout(this.pcRequestTimer)
+    }
+    this.pcRetryTimer = null
+    this.pcRequestTimer = null
+    this.stopManualCursorBlink()
+    this.stopClock()
+  },
+
+  startClock() {
+    this.refreshClock()
+    if (!this.clockTimer && typeof setTimeout === 'function') {
+      this.clockTimer = setTimeout(() => {
+        this.clockTimer = null
+        this.startClock()
+      }, 1000)
+    }
+  },
+
+  stopClock() {
+    if (this.clockTimer && typeof clearTimeout === 'function') {
+      clearTimeout(this.clockTimer)
+    }
+    this.clockTimer = null
+  },
+
+  refreshClock() {
+    const localNowMs = new Date().getTime() + (this.clockOffsetMs || 0)
+    let now = new Date(localNowMs)
+    let hour
+    let minute
+    let month
+    let date
+    let weekday
+    const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+    if (this.clockSynced) {
+      now = new Date(localNowMs + (this.clockZoneOffsetMinutes || 0) * 60000)
+      hour = now.getUTCHours()
+      minute = now.getUTCMinutes()
+      month = now.getUTCMonth() + 1
+      date = now.getUTCDate()
+      weekday = now.getUTCDay()
+    } else {
+      hour = now.getHours()
+      minute = now.getMinutes()
+      month = now.getMonth() + 1
+      date = now.getDate()
+      weekday = now.getDay()
+    }
+    hour = hour < 10 ? '0' + hour : '' + hour
+    minute = minute < 10 ? '0' + minute : '' + minute
+    this.currentTimeText = hour + ':' + minute
+    this.clockMetaText = month + '月' + date + '日 · ' + weekdays[weekday]
+  },
+
+  syncClock(serverTime, serverUtcOffsetMinutes) {
+    const serverMillis = parseInt(serverTime, 10)
+    if (isNaN(serverMillis) || serverMillis < 100000000000) {
+      return
+    }
+    this.clockOffsetMs = serverMillis - new Date().getTime()
+    const zoneOffset = parseInt(serverUtcOffsetMinutes, 10)
+    if (!isNaN(zoneOffset) && zoneOffset >= -840 && zoneOffset <= 840) {
+      this.clockZoneOffsetMinutes = zoneOffset
+    }
+    this.clockSynced = true
+    this.clockSourceText = 'PC 同步'
+    this.refreshClock()
+  },
+
+  pollPc() {
+    if (!this.pcPolling || this.pcBusy) {
+      return
+    }
+    this.pcBusy = true
+    const requestToken = (this.pcRequestToken || 0) + 1
+    this.pcRequestToken = requestToken
+    if (this.pcRequestTimer && typeof clearTimeout === 'function') {
+      clearTimeout(this.pcRequestTimer)
+    }
+    this.pcRequestTimer = setTimeout(() => {
+      if (this.pcBusy && this.pcRequestToken === requestToken) {
+        this.pcRequestToken += 1
+        this.pcBusy = false
+        this.pcRequestTimer = null
+        this.handlePcFailure()
+      }
+    }, 4000)
+    fetch.fetch({
+      url: this.pcUrl,
+      method: 'GET',
+      responseType: 'json',
+      success: (ret) => {
+        if (this.pcRequestToken !== requestToken) {
+          return
+        }
+        if (this.pcRequestTimer && typeof clearTimeout === 'function') {
+          clearTimeout(this.pcRequestTimer)
+        }
+        this.pcRequestTimer = null
+        this.pcBusy = false
+        this.pcFailCount = 0
+        this.connectionBadge = 'ONLINE'
+        this.connectionText = 'PC 上位机已连接'
+        this.applyPcPayload(ret.data)
+        this.schedulePcPoll(30)
+      },
+      fail: () => {
+        if (this.pcRequestToken !== requestToken) {
+          return
+        }
+        if (this.pcRequestTimer && typeof clearTimeout === 'function') {
+          clearTimeout(this.pcRequestTimer)
+        }
+        this.pcRequestTimer = null
+        this.pcBusy = false
+        this.handlePcFailure()
+      }
+    })
+  },
+
+  handlePcFailure() {
+    this.pcFailCount += 1
+    this.connectionBadge = 'OFFLINE'
+    this.connectionText = 'PC 上位机未连接'
+    if (this.pcFailCount === 1) {
+      this.commandText = '正在检测 PC 服务'
+    } else {
+      this.commandText = '连接重试 ' + this.pcFailCount
+    }
+    if (this.pcFailCount >= 2 && this.pcUrls.length > 1) {
+      this.rotatePcUrl()
+    }
+    if (this.pcPolling) {
+      this.schedulePcPoll(this.pcFailCount >= 2 ? 1200 : 500)
+    }
+  },
+
+  schedulePcPoll(delay) {
+    if (!this.pcPolling || typeof setTimeout !== 'function') {
+      return
+    }
+    if (this.pcRetryTimer) {
+      clearTimeout(this.pcRetryTimer)
+    }
+    this.pcRetryTimer = setTimeout(() => {
+      this.pcRetryTimer = null
+      this.pollPc()
+    }, delay || 30)
+  },
+
+  rotatePcUrl() {
+    if (!this.pcUrls || this.pcUrls.length < 2) {
+      return
+    }
+    this.pcUrlIndex = (this.pcUrlIndex + 1) % this.pcUrls.length
+    this.pcUrl = this.pcUrls[this.pcUrlIndex]
+    this.connectionText = '切换 PC 连接通道'
+  },
+
+  reconnectPc() {
+    this.pcFailCount = 0
+    this.pcPolling = true
+    this.connectionBadge = 'WAIT'
+    this.connectionText = '正在重新连接 PC'
+    if (this.pcRetryTimer && typeof clearTimeout === 'function') {
+      clearTimeout(this.pcRetryTimer)
+    }
+    this.pcRetryTimer = null
+    this.pollPc()
+  },
+
+  applyPcPayload(data) {
+    let payload = data
+    if (typeof data === 'string') {
+      try {
+        payload = JSON.parse(data)
+      } catch (e) {
+        return
+      }
+    }
+    if (!payload) {
+      return
+    }
+    this.syncClock(payload.serverTime, payload.serverUtcOffsetMinutes)
+    if (typeof payload.confidence === 'number' || typeof payload.confidence === 'string') {
+      const confidence = parseInt(payload.confidence, 10)
+      if (!isNaN(confidence)) {
+        this.confidenceText = confidence + '%'
+      }
+    }
+    if (payload.command) {
+      this.syncSeqText = '#' + (payload.seq || this.lastSeq || 0)
+    }
+    this.sensorLinkText = this.connectionBadge === 'ONLINE' ? 'IMU + EMG 在线' : '等待连接'
+    this.syncLists(payload)
+    if (!payload.command) {
+      return
+    }
+    if (payload.eventId && payload.eventId === this.lastEventId) {
+      return
+    }
+    this.lastEventId = payload.eventId || ''
+    this.lastSeq = payload.seq || this.lastSeq
+    this.commandText = (payload.label || payload.command) + ' · #' + this.lastSeq
+    let targetApplied = false
+    if (payload.targetDeviceId) {
+      targetApplied = this.setCurrentDeviceById(payload.targetDeviceId)
+    }
+    this.handleCommand(payload, targetApplied)
+    this.updateCurrentStatus()
+    this.updateLearningSelection()
+    this.updateBindingOverview()
+    this.sendAck(payload)
+  },
+
+  syncLists(payload) {
+    if (payload.devices && payload.devices.length > 0) {
+      const oldId = this.currentDeviceId
+      this.devices = payload.devices
+      this.deviceCountText = this.devices.length + ' 台设备'
+      if (!this.setCurrentDeviceById(payload.targetDeviceId || oldId)) {
+        this.deviceIndex = 0
+        this.syncCurrentDevice()
+      }
+      this.ensureRuntimeStates()
+    }
+    if (payload.actions) {
+      this.actions = payload.actions
+      this.actionCountText = this.actions.length + ' 个动作'
+    }
+    if (payload.models) {
+      this.models = payload.models
+      this.modelCountText = this.models.length + ' 个模型'
+    }
+    if (payload.configVersion) {
+      this.configVersion = payload.configVersion
+    }
+    if (payload.settings) {
+      this.applySafetySettings(payload.settings)
+    }
+    this.updateLearningSelection()
+    this.updateCurrentAction()
+    this.updateBindingOverview()
+  },
+
+  handleCommand(payload, targetApplied) {
+    const command = payload.command
+    this.updateDecisionStage(payload, targetApplied)
+    if (command === 'reset_state') {
+      this.resetStates()
+      return
+    }
+    if (command === 'set_mode') {
+      this.applyOperationMode(payload.mode)
+      return
+    }
+    if (command === 'point_next') {
+      if (!targetApplied) {
+        this.nextDevice()
+      }
+      this.decisionIntentText = '空间指向已锁定：' + this.currentDeviceName
+      this.decisionExplainText = '抬腕指向先确定控制目标，后续动作只作用于当前候选设备。'
+      return
+    }
+    if (this.shouldBlockLowConfidence(payload)) {
+      return
+    }
+    if (command === 'swing_up' || command === 'swing_down' || command === 'rotate_cw' || command === 'rotate_ccw') {
+      if (this.applyGestureBinding(command)) {
+        this.markDecisionExecuted(payload)
+        return
+      }
+    }
+    if (command === 'swing_up') {
+      this.setCurrentPower(true)
+      this.markDecisionExecuted(payload)
+      return
+    }
+    if (command === 'swing_down') {
+      this.setCurrentPower(false)
+      this.markDecisionExecuted(payload)
+      return
+    }
+    if (command === 'rotate_cw') {
+      this.adjustCurrentValue(10)
+      this.markDecisionExecuted(payload)
+      return
+    }
+    if (command === 'rotate_ccw') {
+      this.adjustCurrentValue(-10)
+      this.markDecisionExecuted(payload)
+      return
+    }
+    if (command === 'flip_scene' || command === 'compose_scene') {
+      this.switchScene(payload.sceneLabel)
+      this.markDecisionExecuted(payload)
+      return
+    }
+    if (command === 'low_confidence_test') {
+      this.markDecisionBlocked(payload, '低置信度结果被安全门控拦截，设备状态未改变。')
+      return
+    }
+    if (command === 'neutral_return') {
+      this.intentStageText = '回正被过滤'
+      this.decisionSafetyText = '已过滤'
+      this.decisionExplainText = '检测到回正动作，不产生设备控制，避免手臂复位造成误触。'
+      return
+    }
+    if (command === 'flick_cancel') {
+      this.commandText = '已撤销输入，不改变设备状态 · #' + this.lastSeq
+      this.intentStageText = '动作已撤销'
+      this.decisionSafetyText = '已拦截'
+      this.decisionExecuteText = '未执行'
+      this.decisionExplainText = '甩腕取消只撤销当前输入，不改变设备状态。'
+      return
+    }
+    if (command === 'calibrate_space') {
+      this.decisionSpaceText = '坐标已校准'
+      this.decisionSpaceClass = 'copilot-step-done'
+      this.decisionFeatureText = '等待动作'
+      this.decisionFeatureClass = 'copilot-step-active'
+      this.decisionExplainText = '空间校准建立腕部指向与候选设备之间的映射，为后续动作识别提供稳定坐标系。'
+      return
+    }
+    if (command === 'sensor_sample' || command === 'adaptive_match') {
+      this.decisionFeatureText = command === 'adaptive_match' ? '个性模型匹配' : 'IMU + EMG 已接收'
+      this.decisionFeatureClass = 'copilot-step-done'
+      this.decisionSafetyText = '待判定'
+      this.decisionSafetyClass = 'copilot-step-active'
+      this.decisionExplainText = '系统将肌电通道与加速度、陀螺仪特征融合，减少仅依赖九轴造成的误判。'
+      return
+    }
+    if (command === 'training_session') {
+      this.applyTrainingSession(payload)
+      return
+    }
+    if (command === 'training_sample') {
+      this.applyTrainingSample(payload)
+      return
+    }
+    if (command === 'model_update' || command === 'sync_models' || command === 'sync_config') {
+      this.applyModelUpdate(payload)
+      return
+    }
+    if (command === 'inference_waiting') {
+      this.trainingHintText = '等待 PC 输入实时肌电 + IMU 数据'
+      this.inferenceButtonText = '等待数据'
+      return
+    }
+    if (command === 'multimodal_inference') {
+      this.applyInference(payload)
+      return
+    }
+    if (payload.actionDef) {
+      this.applyActionDef(payload.actionDef)
+      this.markDecisionExecuted(payload)
+    }
+  },
+
+  updateDecisionStage(payload, targetApplied) {
+    const command = payload && payload.command ? payload.command : ''
+    const confidence = parseInt(payload && payload.confidence, 10)
+    if (payload && payload.demoFlow) {
+      const step = payload.demoStep || 0
+      const total = payload.demoTotal || 0
+      this.copilotHintText = step && total ? ('AI 闭环演示 ' + step + '/' + total) : 'AI 闭环演示进行中'
+      if (payload.demoExplain) {
+        this.decisionExplainText = payload.demoExplain
+      }
+      if (payload.sensorSummary) {
+        this.lastEvidenceText = '证据：' + payload.sensorSummary
+      }
+      if (payload.demoStage === 'space_calibration') {
+        this.intentStageText = '空间校准'
+      } else if (payload.demoStage === 'space_lock') {
+        this.intentStageText = '目标锁定'
+      } else if (payload.demoStage === 'feature_fusion') {
+        this.intentStageText = '特征融合'
+      } else if (payload.demoStage === 'safety_reject') {
+        this.intentStageText = '安全拦截'
+      } else if (payload.demoStage === 'device_execute') {
+        this.intentStageText = '设备执行'
+      } else if (payload.demoStage === 'continuous_control') {
+        this.intentStageText = '连续调节'
+      } else if (payload.demoStage === 'scene_complete') {
+        this.intentStageText = '场景联动'
+      }
+    }
+    if (command === 'reset_state') {
+      this.intentStageText = '等待输入'
+      this.decisionIntentText = '等待空间指向或微手势'
+      this.decisionSpaceText = '未锁定'
+      this.decisionFeatureText = '待采集'
+      this.decisionSafetyText = '待判定'
+      this.decisionExecuteText = '待执行'
+      this.decisionSpaceClass = 'copilot-step-idle'
+      this.decisionFeatureClass = 'copilot-step-idle'
+      this.decisionSafetyClass = 'copilot-step-idle'
+      this.decisionExecuteClass = 'copilot-step-idle'
+      this.lastEvidenceText = '证据：系统已复位，等待新的动作数据'
+      this.decisionExplainText = '等待输入后，系统会展示目标设备、动作证据、置信度和安全门控结果。'
+      return
+    }
+    if (command === 'point_next' || targetApplied) {
+      this.intentStageText = '空间已锁定'
+      this.decisionSpaceText = this.currentDeviceName
+      this.decisionSpaceClass = 'copilot-step-done'
+      this.decisionIntentText = '目标：' + this.currentDeviceName
+      this.lastEvidenceText = '证据：空间指向 / ' + this.currentDeviceZone
+    }
+    if (command === 'rotate_cw' || command === 'rotate_ccw' || command === 'swing_up' || command === 'swing_down' || command === 'flip_scene' || command === 'compose_scene' || command === 'low_confidence_test' || payload.actionDef) {
+      this.intentStageText = 'AI 正在决策'
+      this.decisionFeatureText = payload.actionDef && payload.actionDef.isCustomTrigger ? '个性模型' : 'IMU + EMG'
+      this.decisionFeatureClass = 'copilot-step-done'
+      this.decisionSafetyText = isNaN(confidence) ? '规则通过' : confidence + '%'
+      this.decisionSafetyClass = 'copilot-step-active'
+      this.decisionExecuteText = '等待执行'
+      this.decisionExecuteClass = 'copilot-step-idle'
+      this.decisionIntentText = (payload.label || payload.command || '动作') + ' → ' + this.currentDeviceName
+      this.lastEvidenceText = '证据：' + this.decisionFeatureText + ' · 置信度 ' + (isNaN(confidence) ? '待确认' : confidence + '%')
+    }
+  },
+
+  markDecisionExecuted(payload) {
+    const confidence = parseInt(payload && payload.confidence, 10)
+    this.intentStageText = '设备已执行'
+    this.decisionSafetyText = isNaN(confidence) ? '已通过' : confidence + '% 通过'
+    this.decisionSafetyClass = 'copilot-step-done'
+    this.decisionExecuteText = '已执行'
+    this.decisionExecuteClass = 'copilot-step-done'
+    this.decisionExplainText = payload && payload.demoExplain ? payload.demoExplain : '识别结果通过安全门控，当前动作已作用于锁定设备。'
+    this.lastEvidenceText = '证据：' + this.currentDeviceName + ' · ' + this.currentStatusText + ' / ' + this.currentValueText
+    if (payload && payload.demoFlow && payload.demoStep && payload.demoTotal) {
+      this.copilotHintText = 'AI 闭环演示 ' + payload.demoStep + '/' + payload.demoTotal + ' · 已执行'
+    }
+  },
+
+  markDecisionBlocked(payload, reason) {
+    const confidence = parseInt(payload && payload.confidence, 10)
+    this.intentStageText = '安全拦截'
+    this.decisionSafetyText = isNaN(confidence) ? '已拦截' : confidence + '% 拦截'
+    this.decisionSafetyClass = 'copilot-step-done'
+    this.decisionExecuteText = '未执行'
+    this.decisionExecuteClass = 'copilot-step-active'
+    this.decisionExplainText = reason || '本次输入没有达到执行条件，设备状态保持不变。'
+    if (payload && payload.demoFlow && payload.demoStep && payload.demoTotal) {
+      this.copilotHintText = 'AI 闭环演示 ' + payload.demoStep + '/' + payload.demoTotal + ' · 已拦截'
+    }
+  },
+
+  ensureRuntimeStates() {
+    for (let index = 0; index < this.devices.length; index++) {
+      const device = this.devices[index]
+      if (!this.findRuntimeState(device.id)) {
+        this.runtimeStates.push({ id: device.id, state: '关闭', value: '待机' })
+      }
+    }
+  },
+
+  findRuntimeState(deviceId) {
+    for (let index = 0; index < this.runtimeStates.length; index++) {
+      if (this.runtimeStates[index].id === deviceId) {
+        return this.runtimeStates[index]
+      }
+    }
+    return null
+  },
+
+  setRuntimeState(deviceId, state, value) {
+    let runtime = this.findRuntimeState(deviceId)
+    if (!runtime) {
+      runtime = { id: deviceId, state: state, value: value }
+      this.runtimeStates.push(runtime)
+    }
+    runtime.state = state
+    runtime.value = value
+  },
+
+  resetStates() {
+    this.lightStateText = '关闭'
+    this.lightLevel = 0
+    this.acStateText = '关闭'
+    this.temperature = 26
+    this.curtainStateText = '关闭'
+    this.speakerStateText = '静音'
+    this.volume = 0
+    this.sceneIndex = 0
+    this.sceneName = '日常'
+    for (let index = 0; index < this.runtimeStates.length; index++) {
+      this.runtimeStates[index].state = '关闭'
+      this.runtimeStates[index].value = this.runtimeStates[index].id === 'light' || this.runtimeStates[index].id === 'speaker' ? '0%' : '待机'
+    }
+    this.setRuntimeState('ac', '关闭', '关闭')
+    this.setRuntimeState('curtain', '关闭', '日常')
+    this.updateCurrentStatus()
+  },
+
+  setCurrentPower(enabled) {
+    if (this.currentDeviceId === 'light') {
+      this.lightLevel = enabled ? (this.lightLevel > 0 ? this.lightLevel : 50) : 0
+      this.lightStateText = enabled ? '开启' : '关闭'
+      this.setRuntimeState('light', this.lightStateText, this.lightLevel + '%')
+    } else if (this.currentDeviceId === 'ac') {
+      this.acStateText = enabled ? '开启' : '关闭'
+      this.setRuntimeState('ac', this.acStateText, enabled ? this.temperature + '℃' : '关闭')
+    } else if (this.currentDeviceId === 'curtain') {
+      this.curtainStateText = enabled ? '开启' : '关闭'
+      this.setRuntimeState('curtain', this.curtainStateText, this.sceneName)
+    } else if (this.currentDeviceId === 'speaker') {
+      this.volume = enabled ? (this.volume > 0 ? this.volume : 45) : 0
+      this.speakerStateText = enabled ? '播放' : '静音'
+      this.setRuntimeState('speaker', this.speakerStateText, this.volume + '%')
+    } else {
+      this.setRuntimeState(this.currentDeviceId, enabled ? '开启' : '关闭', enabled ? '运行中' : '待机')
+    }
+    this.updateCurrentStatus()
+  },
+
+  adjustCurrentValue(delta) {
+    if (this.currentDeviceId === 'light') {
+      this.lightLevel = this.clamp(this.lightLevel + delta, 0, 100)
+      this.lightStateText = this.lightLevel > 0 ? '开启' : '关闭'
+      this.setRuntimeState('light', this.lightStateText, this.lightLevel + '%')
+    } else if (this.currentDeviceId === 'speaker') {
+      this.volume = this.clamp(this.volume + delta, 0, 100)
+      this.speakerStateText = this.volume > 0 ? '播放' : '静音'
+      this.setRuntimeState('speaker', this.speakerStateText, this.volume + '%')
+    } else if (this.currentDeviceId === 'ac') {
+      this.temperature = this.clamp(this.temperature + (delta > 0 ? 1 : -1), 16, 30)
+      this.setRuntimeState('ac', this.acStateText, this.acStateText === '开启' ? this.temperature + '℃' : '关闭')
+    } else {
+      this.setRuntimeState(this.currentDeviceId, '已调节', delta > 0 ? '调高' : '调低')
+    }
+    this.updateCurrentStatus()
+  },
+
+  switchScene(sceneLabel) {
+    const scenes = ['日常', '观影', '睡眠', '专注', '离家']
+    if (sceneLabel) {
+      this.sceneName = sceneLabel
+      for (let index = 0; index < scenes.length; index++) {
+        if (scenes[index] === sceneLabel) {
+          this.sceneIndex = index
+        }
+      }
+    } else {
+      this.sceneIndex = (this.sceneIndex + 1) % scenes.length
+      this.sceneName = scenes[this.sceneIndex]
+    }
+    this.setRuntimeState('curtain', this.curtainStateText, this.sceneName)
+    this.updateCurrentStatus()
+  },
+
+  applyActionDef(actionDef) {
+    if (!actionDef) {
+      return
+    }
+    const targetId = actionDef.deviceId || actionDef.targetDeviceId
+    if (targetId) {
+      this.setCurrentDeviceById(targetId)
+    }
+    const commandAction = actionDef.commandAction || ''
+    if (commandAction && this.applyCommandAction(commandAction, actionDef)) {
+      return
+    }
+    const command = actionDef.command || actionDef.action || ''
+    if (command === 'swing_up' || command.indexOf('_on') >= 0 || command.indexOf('_open') >= 0) {
+      this.setCurrentPower(true)
+    } else if (command === 'swing_down' || command.indexOf('_off') >= 0 || command.indexOf('_close') >= 0) {
+      this.setCurrentPower(false)
+    } else if (command === 'rotate_cw' || command.indexOf('_up') >= 0 || command.indexOf('increase') >= 0) {
+      this.adjustCurrentValue(10)
+    } else if (command === 'rotate_ccw' || command.indexOf('_down') >= 0 || command.indexOf('decrease') >= 0) {
+      this.adjustCurrentValue(-10)
+    } else if (command === 'flip_scene' || command.indexOf('scene') >= 0) {
+      this.switchScene('')
+    } else if (command.indexOf('quick_freeze') >= 0) {
+      this.setRuntimeState(this.currentDeviceId, '开启', '速冻')
+    } else {
+      this.setRuntimeState(this.currentDeviceId, '已执行', actionDef.name || command)
+    }
+    this.updateCurrentStatus()
+  },
+
+  shouldBlockLowConfidence(payload) {
+    if (!this.safetyGuardEnabled || !payload) {
+      return false
+    }
+    const command = payload.command || ''
+    const actionable = command === 'swing_up' || command === 'swing_down' ||
+      command === 'rotate_cw' || command === 'rotate_ccw' || command === 'custom_action' ||
+      command === 'low_confidence_test' || !!payload.actionDef
+    if (this.operationMode === 'training' && actionable) {
+      this.commandText = '训练模式：已隔离设备执行'
+      this.trainingHintText = '当前仅采集数据，不改变设备状态'
+      this.markDecisionBlocked(payload, '训练模式只采集动作数据，不直接改变设备状态。')
+      return true
+    }
+    const confidence = parseInt(payload.confidence, 10)
+    if (!actionable || isNaN(confidence) || confidence >= this.safetyThreshold) {
+      return false
+    }
+    this.commandText = '低置信度已拦截：' + confidence + '% < ' + this.safetyThreshold + '%'
+    this.trainingHintText = '安全门控已阻止本次误触，设备状态未改变'
+    this.rankingText = '识别结果低于安全阈值：' + confidence + '%'
+    this.markDecisionBlocked(payload, '低置信度结果被安全门控拦截，设备状态未改变。')
+    return true
+  },
+
+  applySafetySettings(settings) {
+    if (!settings) {
+      return
+    }
+    if (typeof settings.safetyGuardEnabled === 'boolean') {
+      this.safetyGuardEnabled = settings.safetyGuardEnabled
+    }
+    const threshold = parseInt(settings.safetyThreshold, 10)
+    if (!isNaN(threshold) && threshold >= 50 && threshold <= 99) {
+      this.safetyThreshold = threshold
+    }
+    if (settings.operationMode) {
+      this.applyOperationMode(settings.operationMode, true)
+    }
+    this.refreshSafetyGuardText()
+  },
+
+  applyOperationMode(mode, silent) {
+    const normalized = mode || 'demo'
+    this.operationMode = normalized
+    if (normalized === 'training') {
+      this.operationModeText = '训练模式'
+      this.modeDetailText = '采集数据，不执行设备'
+    } else if (normalized === 'inference') {
+      this.operationModeText = '识别模式'
+      this.modeDetailText = '模型判定后执行'
+    } else {
+      this.operationMode = 'demo'
+      this.operationModeText = '演示模式'
+      this.modeDetailText = 'PC Mock 联调'
+    }
+    if (!silent) {
+      this.commandText = '已切换：' + this.operationModeText
+    }
+  },
+
+  refreshSafetyGuardText() {
+    this.safetyGuardText = this.safetyGuardEnabled ? '安全门控：已开启' : '安全门控：已暂停'
+    this.safetyGuardDetail = this.safetyGuardEnabled ?
+      ('低于 ' + this.safetyThreshold + '% 置信度的设备控制会被拦截') :
+      '当前不拦截低置信度结果，仅用于受控调试'
+    this.safetyGuardButtonText = this.safetyGuardEnabled ? '当前开启' : '当前暂停'
+    this.safetyGuardStateShort = this.safetyGuardEnabled ? '开启' : '暂停'
+  },
+
+  toggleSafetyGuard() {
+    this.safetyGuardEnabled = !this.safetyGuardEnabled
+    this.refreshSafetyGuardText()
+    this.managementMessage = this.safetyGuardText
+    this.managementSubMessage = this.safetyGuardDetail
+    this.sendWatchConfig('update_safety_guard', this.safetyGuardText)
+  },
+
+  findBoundTriggerAction(triggerCommand) {
+    const actions = this.getCurrentActions()
+    for (let index = 0; index < actions.length; index++) {
+      const action = actions[index]
+      const trigger = action.triggerCommand || action.command || ''
+      if (trigger === triggerCommand && action.commandAction) {
+        return action
+      }
+    }
+    return null
+  },
+
+  applyGestureBinding(triggerCommand) {
+    const action = this.findBoundTriggerAction(triggerCommand)
+    if (!action) {
+      return false
+    }
+    return this.applyCommandAction(action.commandAction, action)
+  },
+
+  applyCommandAction(commandAction, actionDef) {
+    const label = actionDef && (actionDef.name || actionDef.triggerName) ? (actionDef.name || actionDef.triggerName) : this.commandActionLabel(commandAction)
+    if (commandAction === 'power_on' || commandAction === 'swing_up' || commandAction.indexOf('_on') >= 0 || commandAction.indexOf('_open') >= 0) {
+      this.setCurrentPower(true)
+      this.commandText = label + '：开启'
+      return true
+    }
+    if (commandAction === 'power_off' || commandAction === 'swing_down' || commandAction.indexOf('_off') >= 0 || commandAction.indexOf('_close') >= 0) {
+      this.setCurrentPower(false)
+      this.commandText = label + '：关闭'
+      return true
+    }
+    if (commandAction === 'value_up' || commandAction === 'rotate_cw' || commandAction.indexOf('_up') >= 0 || commandAction.indexOf('increase') >= 0) {
+      this.adjustCurrentValue(10)
+      this.commandText = label + '：调高'
+      return true
+    }
+    if (commandAction === 'value_down' || commandAction === 'rotate_ccw' || commandAction.indexOf('_down') >= 0 || commandAction.indexOf('decrease') >= 0) {
+      this.adjustCurrentValue(-10)
+      this.commandText = label + '：调低'
+      return true
+    }
+    if (commandAction === 'custom_command' || commandAction.indexOf('custom') >= 0) {
+      this.setRuntimeState(this.currentDeviceId, '已执行', label)
+      this.commandText = label + '：已执行'
+      return true
+    }
+    return false
+  },
+
+  applyTrainingSession(payload) {
+    if (payload.actionId) {
+      this.trainingActionId = payload.actionId
+    }
+    this.updateLearningSelection()
+    const workflow = payload.workflow || {}
+    const model = payload.model || this.findModel(this.trainingActionId)
+    const count = workflow.sampleCount !== undefined ? workflow.sampleCount : (model ? (model.sampleCount || 0) : 0)
+    const minimum = workflow.minSamples || 10
+    if (count >= minimum) {
+      this.trainingHintText = '采集已完成，请点击训练模型'
+      this.learningStateText = '待训练'
+      return
+    }
+    this.trainingHintText = '请在 PC 输入第 ' + (count + 1) + '/' + minimum + ' 组数据'
+    this.learningStateText = '采集中'
+  },
+
+  applyTrainingSample(payload) {
+    this.syncLists(payload)
+    const model = payload.model || this.findModel(payload.actionId || this.trainingActionId)
+    const count = model ? (model.sampleCount || 0) : 0
+    const workflow = payload.workflow || {}
+    this.trainingSamplesText = count + '/10'
+    if (count >= 10) {
+      this.trainingHintText = workflow.label ? workflow.label + ' · 采集入口已锁定' : '10/10 组样本已入库，采集入口已锁定'
+      this.learningStateText = '待训练'
+      this.modelButtonText = '开始训练'
+    } else {
+      this.trainingHintText = '第 ' + count + '/10 组样本已入库'
+      this.learningStateText = '采集中'
+      this.modelButtonText = '样本不足'
+    }
+  },
+
+  applyModelUpdate(payload) {
+    this.syncLists(payload)
+    if (payload.actionId) {
+      this.trainingActionId = payload.actionId
+    }
+    this.updateLearningSelection()
+    const model = payload.model || this.findModel(this.trainingActionId)
+    if (model && model.status === 'trained') {
+      const workflow = payload.workflow || {}
+      this.trainingHintText = workflow.label ? workflow.label : '模型训练完成，可进行实时识别'
+      this.learningStateText = '可识别'
+      this.inferenceButtonText = '开始识别'
+    }
+  },
+
+  applyInference(payload) {
+    this.syncLists(payload)
+    const inference = payload.inference || {}
+    const predictions = payload.predictions || inference.ranking || []
+    this.rankingText = this.createRankingText(predictions)
+    if (inference.accepted && payload.actionDef) {
+      this.applyActionDef(payload.actionDef)
+      this.trainingHintText = '识别通过：' + (payload.actionDef.name || payload.label || '已触发')
+      this.inferenceButtonText = '已通过'
+      this.markDecisionExecuted(payload)
+    } else {
+      this.trainingHintText = '识别未通过阈值，设备未执行'
+      this.inferenceButtonText = '未通过'
+      this.markDecisionBlocked(payload, '模型识别结果未达到动作触发阈值，设备状态保持不变。')
+    }
+  },
+
+  createRankingText(predictions) {
+    if (!predictions || predictions.length < 1) {
+      this.rankingShortText = '无有效结果'
+      return '候选模型：无有效结果'
+    }
+    let text = '候选：'
+    const limit = predictions.length > 3 ? 3 : predictions.length
+    for (let index = 0; index < limit; index++) {
+      const item = predictions[index]
+      if (index > 0) {
+        text += ' / '
+      }
+      text += (item.actionName || item.name || '动作') + ' ' + (item.confidence || 0) + '%'
+    }
+    const best = predictions[0]
+    this.rankingShortText = (best.actionName || best.name || '动作') + ' ' + (best.confidence || 0) + '%'
+    return text
+  },
+
+  requestCapture() {
+    const model = this.findModel(this.trainingActionId)
+    const count = model ? (model.sampleCount || 0) : 0
+    if (count >= 10 || (model && model.status === 'trained')) {
+      this.trainingHintText = '采集已锁定，请清空样本后重新开始'
+      this.learningStateText = '已封存'
+      return
+    }
+    this.trainingHintText = '已通知 PC，请输入第 ' + (count + 1) + '/10 组数据'
+    this.sendMultimodalRequest('capture')
+  },
+
+  requestTrain() {
+    const model = this.findModel(this.trainingActionId)
+    const count = model ? (model.sampleCount || 0) : 0
+    if (count < 10) {
+      this.trainingHintText = '样本不足：请先完成 10 组采集'
+      this.learningStateText = '采集中'
+      return
+    }
+    if (model && model.status === 'trained') {
+      this.trainingHintText = '模型已训练，可直接进行识别'
+      this.learningStateText = '可识别'
+      return
+    }
+    this.trainingHintText = '已提交模型训练'
+    this.sendMultimodalRequest('train')
+  },
+
+  requestInfer() {
+    const model = this.findModel(this.trainingActionId)
+    if (!model || model.status !== 'trained') {
+      this.trainingHintText = '模型未就绪：请先采集 10 组并训练'
+      this.inferenceButtonText = '模型未就绪'
+      return
+    }
+    this.trainingHintText = '等待 PC 输入一组实时动作数据'
+    this.sendMultimodalRequest('infer')
+  },
+
+  requestSyncModels() {
+    this.trainingHintText = '正在同步设备、动作和模型'
+    this.sendMultimodalRequest('sync')
+  },
+
+  sendMultimodalRequest(requestName) {
+    if (!this.trainingActionId && requestName !== 'sync') {
+      this.trainingHintText = '当前设备没有可训练动作'
+      return
+    }
+    const now = new Date().getTime()
+    if (now - (this.multimodalRequestAt || 0) < 650) {
+      this.trainingHintText = '请求处理中，请稍候'
+      return
+    }
+    this.multimodalRequestAt = now
+    const payload = {
+      type: 'multimodal_request',
+      origin: 'watch',
+      request: requestName,
+      actionId: this.trainingActionId,
+      deviceId: this.currentDeviceId,
+      deviceName: this.currentDeviceName,
+      schema: 'space-aiot.multimodal-window.v1'
+    }
+    this.postToPc(payload, 'AI 请求已提交：' + requestName)
+  },
+
+  sendAck(payload) {
+    const ack = {
+      type: 'pc_command_ack',
+      seq: this.lastSeq,
+      eventId: payload.eventId || '',
+      command: payload.command,
+      label: payload.label,
+      status: 'handled',
+      deviceName: this.currentDeviceName,
+      intentTitle: this.commandText,
+      intentDetail: this.currentStatusText + ' / ' + this.currentValueText
+    }
+    this.postToPc(ack, '')
+  },
+
+  postToPc(payload, successText) {
+    fetch.fetch({
+      url: this.pcUrl,
+      method: 'POST',
+      responseType: 'json',
+      header: { 'Content-Type': 'application/json' },
+      data: JSON.stringify(payload),
+      success: (ret) => {
+        const result = ret && ret.data ? ret.data : ret
+        if (result && result.ok === false) {
+          const message = result.message || result.error || '当前流程未允许'
+          this.commandText = '请求未执行：' + message
+          if (payload.type === 'multimodal_request') {
+            this.trainingHintText = message
+          }
+          return
+        }
+        if (successText) {
+          this.commandText = successText
+        }
+      },
+      fail: () => {
+        this.connectionBadge = 'OFFLINE'
+        this.connectionText = 'PC 上位机未连接'
+      }
+    })
+  },
+
+  quickPointNext() {
+    this.postQuickCommand('point_next', '快捷抬腕：切换候选')
+  },
+
+  quickPowerToggle() {
+    const active = this.currentStatusText === '开启' || this.currentStatusText === '播放' ||
+      this.currentStatusText === '运行中'
+    this.postQuickCommand(active ? 'swing_down' : 'swing_up', active ? '快捷下摆：关闭设备' : '快捷上摆：开启设备')
+  },
+
+  quickAdjust() {
+    this.postQuickCommand('rotate_cw', '快捷转腕：调高 / 增强')
+  },
+
+  postQuickCommand(command, label) {
+    const now = new Date().getTime()
+    if (now - (this.quickCommandAt || 0) < 420) {
+      this.commandText = '操作过快，已过滤重复指令'
+      return
+    }
+    this.quickCommandAt = now
+    const payload = {
+      command: command,
+      label: label,
+      inputSource: 'AIoT快捷卡片',
+      confidence: 96
+    }
+    if (command !== 'point_next') {
+      payload.targetDeviceId = this.currentDeviceId
+      payload.targetDeviceName = this.currentDeviceName
+    }
+    this.commandText = label
+    this.postToPc(payload, label + ' · 已提交')
+  },
+
+  findModel(actionId) {
+    for (let index = 0; index < this.models.length; index++) {
+      if (this.models[index].actionId === actionId) {
+        return this.models[index]
+      }
+    }
+    return null
+  },
+
+  getCurrentActions() {
+    const result = []
+    for (let index = 0; index < this.actions.length; index++) {
+      const action = this.actions[index]
+      const deviceId = action.deviceId || action.targetDeviceId || ''
+      if (!deviceId || deviceId === this.currentDeviceId) {
+        result.push(action)
+      }
+    }
+    return result
+  },
+
+  updateCurrentAction() {
+    const actions = this.getCurrentActions()
+    this.currentActionCountText = actions.length + ' 个专属动作'
+    if (actions.length < 1) {
+      this.currentActionName = '尚未配置动作'
+      return
+    }
+    let selected = actions[0]
+    for (let index = 0; index < actions.length; index++) {
+      if (actions[index].id === this.trainingActionId) {
+        selected = actions[index]
+      }
+    }
+    this.currentActionName = selected.name || selected.command || '自定义动作'
+  },
+
+  selectNextTrainingAction() {
+    const actions = this.getCurrentActions()
+    if (actions.length < 1) {
+      this.trainingActionId = ''
+      this.trainingActionName = '请先添加动作'
+      this.trainingActionShort = '无动作'
+      return
+    }
+    this.trainingActionIndex = (this.trainingActionIndex + 1) % actions.length
+    this.trainingActionId = actions[this.trainingActionIndex].id
+    this.updateLearningSelection()
+  },
+
+  updateLearningSelection() {
+    const actions = this.getCurrentActions()
+    if (actions.length < 1) {
+      this.trainingActionId = ''
+      this.trainingActionName = '请先添加动作'
+      this.trainingActionShort = '无动作'
+      this.trainingSamplesText = '0/10'
+      this.modelStatusText = '模型：待配置'
+      this.learningStateText = '待配置'
+      this.modelButtonText = '无动作'
+      this.inferenceButtonText = '无模型'
+      this.rankingShortText = '无模型'
+      this.updateCurrentAction()
+      return
+    }
+    let selected = null
+    for (let index = 0; index < actions.length; index++) {
+      if (actions[index].id === this.trainingActionId) {
+        selected = actions[index]
+        this.trainingActionIndex = index
+        break
+      }
+    }
+    if (!selected) {
+      this.trainingActionIndex = 0
+      selected = actions[0]
+      this.trainingActionId = selected.id
+    }
+    this.trainingActionName = selected.name || selected.command || '自定义动作'
+    this.trainingActionShort = this.trainingActionName
+    this.currentActionName = this.trainingActionName
+    this.currentActionCountText = actions.length + ' 个专属动作'
+    const model = this.findModel(this.trainingActionId)
+    const count = model ? (model.sampleCount || 0) : 0
+    const status = model ? (model.status || 'collecting') : 'collecting'
+    const quality = model ? (model.quality || 0) : 0
+    const threshold = model ? (model.threshold || 80) : 80
+    this.trainingSamplesText = count + '/10'
+    this.modelStatusText = '模型：' + status + ' / 质量 ' + quality + '% / 阈值 ' + threshold + '%'
+    if (status === 'trained') {
+      this.rankingShortText = '模型就绪'
+    } else if (count >= 10) {
+      this.rankingShortText = '等待训练'
+    } else {
+      this.rankingShortText = '采集 ' + count + '/10'
+    }
+    if (status === 'trained') {
+      this.learningStateText = '可识别'
+      this.modelButtonText = '已训练'
+      this.inferenceButtonText = '开始识别'
+    } else if (count >= 10) {
+      this.learningStateText = '可训练'
+      this.modelButtonText = '开始训练'
+      this.inferenceButtonText = '模型未就绪'
+    } else {
+      this.learningStateText = '采集中'
+      this.modelButtonText = '样本不足'
+      this.inferenceButtonText = '模型未就绪'
+    }
+  },
+
+  setCurrentDeviceById(deviceId) {
+    if (!deviceId) {
+      return false
+    }
+    for (let index = 0; index < this.devices.length; index++) {
+      if (this.devices[index].id === deviceId) {
+        this.deviceIndex = index
+        this.syncCurrentDevice()
+        return true
+      }
+    }
+    return false
+  },
+
+  previousDevice() {
+    if (this.devices.length < 1) {
+      return
+    }
+    this.deviceIndex = (this.deviceIndex + this.devices.length - 1) % this.devices.length
+    this.syncCurrentDevice()
+    this.updateLearningSelection()
+  },
+
+  nextDevice() {
+    if (this.devices.length < 1) {
+      return
+    }
+    this.deviceIndex = (this.deviceIndex + 1) % this.devices.length
+    this.syncCurrentDevice()
+    this.updateLearningSelection()
+  },
+
+  syncCurrentDevice() {
+    if (!this.devices || this.devices.length < 1) {
+      return
+    }
+    if (this.deviceIndex < 0 || this.deviceIndex >= this.devices.length) {
+      this.deviceIndex = 0
+    }
+    const current = this.devices[this.deviceIndex]
+    const previous = this.devices[(this.deviceIndex + this.devices.length - 1) % this.devices.length]
+    const next = this.devices[(this.deviceIndex + 1) % this.devices.length]
+    const third = this.devices[(this.deviceIndex + 2) % this.devices.length]
+    this.currentDeviceId = current.id
+    this.currentDeviceName = current.name
+    this.currentDeviceZone = current.zone || '未分区'
+    this.currentDeviceTypeText = current.type || 'switch'
+    this.previousDeviceName = previous.name
+    this.nextDeviceName = next.name
+    this.thirdDeviceName = third.name
+    this.devicePositionText = (this.deviceIndex + 1) + ' / ' + this.devices.length
+    this.deviceCountText = this.devices.length + ' 台设备'
+    this.updateCurrentStatus()
+    this.updateCurrentAction()
+    this.updateBindingOverview()
+  },
+
+  updateCurrentStatus() {
+    const runtime = this.findRuntimeState(this.currentDeviceId)
+    if (runtime) {
+      this.currentStatusText = runtime.state
+      this.currentValueText = runtime.value
+    } else {
+      this.currentStatusText = '关闭'
+      this.currentValueText = '待机'
+    }
+  },
+
+  localAddDevice() {
+    for (let templateIndex = 0; templateIndex < this.deviceTemplates.length; templateIndex++) {
+      const template = this.deviceTemplates[templateIndex]
+      let exists = false
+      for (let deviceIndex = 0; deviceIndex < this.devices.length; deviceIndex++) {
+        if (this.devices[deviceIndex].id === template.id) {
+          exists = true
+        }
+      }
+      if (!exists) {
+        this.devices.push({
+          id: template.id,
+          name: template.name,
+          type: template.type,
+          zone: template.zone
+        })
+        this.deviceIndex = this.devices.length - 1
+        this.ensureRuntimeStates()
+        this.syncCurrentDevice()
+        this.updateLearningSelection()
+        this.managementMessage = '已添加 ' + template.name + '，请继续添加动作'
+        this.sendWatchConfig('add_device', this.managementMessage)
+        this.actionConfigMessage = '已添加设备：' + template.name + '，请继续绑定动作'
+        this.openActionConfig()
+        return
+      }
+    }
+    this.managementMessage = '设备模板已全部添加'
+  },
+
+  openManualDeviceInput() {
+    this.manualFieldIndex = 0
+    this.manualImeBuffer = ''
+    this.refreshManualInput()
+    this.showSection('manual')
+    this.focusManualInput()
+  },
+
+  refreshManualInput() {
+    if (this.manualFieldIndex === 0) {
+      this.manualInputLabel = '设备名称'
+      this.manualInputValue = this.manualDeviceName || (this.manualInputFocused ? '' : '输入设备名称')
+      this.manualInputHint = '点中文词可直接填入，也可切换字母数字'
+    } else if (this.manualFieldIndex === 1) {
+      this.manualInputLabel = '设备类型'
+      this.manualInputValue = this.manualDeviceType || (this.manualInputFocused ? '' : 'switch')
+      this.manualInputHint = '建议：phone / fridge / light / camera'
+    } else {
+      this.manualInputLabel = '空间位置'
+      this.manualInputValue = this.manualDeviceZone || (this.manualInputFocused ? '' : '未分区')
+      this.manualInputHint = '建议：随身 / 厨房 / 桌面 / 门口'
+    }
+    this.updateImeCandidates()
+  },
+
+  focusManualInput() {
+    this.manualInputFocused = true
+    this.manualCursorVisible = true
+    this.refreshManualCursor()
+    this.startManualCursorBlink()
+  },
+
+  refreshManualCursor() {
+    this.manualCursorText = (this.manualInputFocused && this.manualCursorVisible) ? '|' : ' '
+  },
+
+  resetManualCursorBlink() {
+    this.manualInputFocused = true
+    this.manualCursorVisible = true
+    this.refreshManualCursor()
+    this.startManualCursorBlink()
+  },
+
+  startManualCursorBlink() {
+    if (!this.manualInputVisible || this.manualCursorTimer || typeof setTimeout !== 'function') {
+      return
+    }
+    this.manualCursorTimer = setTimeout(() => {
+      this.manualCursorTimer = null
+      this.blinkManualCursor()
+    }, 480)
+  },
+
+  blinkManualCursor() {
+    if (!this.manualInputVisible || !this.manualInputFocused) {
+      this.manualCursorTimer = null
+      this.refreshManualCursor()
+      return
+    }
+    this.manualCursorVisible = !this.manualCursorVisible
+    this.refreshManualCursor()
+    this.startManualCursorBlink()
+  },
+
+  stopManualCursorBlink() {
+    if (this.manualCursorTimer && typeof clearTimeout === 'function') {
+      clearTimeout(this.manualCursorTimer)
+    }
+    this.manualCursorTimer = null
+    this.manualInputFocused = false
+    this.manualCursorVisible = false
+    this.refreshManualCursor()
+  },
+
+  currentImeDictionary() {
+    if (this.manualFieldIndex === 1) {
+      return [
+        { text: 'phone', value: 'phone', pinyin: 'phone shouji sj' },
+        { text: 'fridge', value: 'fridge', pinyin: 'fridge bingxiang bx' },
+        { text: 'camera', value: 'camera', pinyin: 'camera shexiangtou sxt' },
+        { text: 'light', value: 'light', pinyin: 'light deng dd' },
+        { text: 'ac', value: 'ac', pinyin: 'ac kongtiao kt' },
+        { text: 'curtain', value: 'curtain', pinyin: 'curtain chuanglian cl' },
+        { text: 'speaker', value: 'speaker', pinyin: 'speaker yinxiang yx' },
+        { text: 'tv', value: 'tv', pinyin: 'tv dianshi ds' },
+        { text: 'fan', value: 'fan', pinyin: 'fan fengshan fs' },
+        { text: 'switch', value: 'switch', pinyin: 'switch kaiguan kg' }
+      ]
+    }
+    if (this.manualFieldIndex === 2) {
+      return [
+        { text: '随身', value: '随身', pinyin: 'suishen ss' },
+        { text: '厨房', value: '厨房', pinyin: 'chufang cf' },
+        { text: '桌面', value: '桌面', pinyin: 'zhuomian zm' },
+        { text: '门口', value: '门口', pinyin: 'menkou mk' },
+        { text: '客厅', value: '客厅', pinyin: 'keting kt' },
+        { text: '卧室', value: '卧室', pinyin: 'woshi ws' },
+        { text: '阳台', value: '阳台', pinyin: 'yangtai yt' },
+        { text: '正前方', value: '正前方', pinyin: 'zhengqianfang zqf' },
+        { text: '左前方', value: '左前方', pinyin: 'zuoqianfang zqf' },
+        { text: '右前方', value: '右前方', pinyin: 'youqianfang yqf' }
+      ]
+    }
+    return [
+      { text: '手机', value: '手机', pinyin: 'shouji sj', type: 'phone', zone: '随身' },
+      { text: '冰箱', value: '冰箱', pinyin: 'bingxiang bx', type: 'fridge', zone: '厨房' },
+      { text: '摄像头', value: '摄像头', pinyin: 'shexiangtou sxt', type: 'camera', zone: '门口' },
+      { text: '电视', value: '电视', pinyin: 'dianshi ds', type: 'tv', zone: '正前方' },
+      { text: '风扇', value: '风扇', pinyin: 'fengshan fs', type: 'fan', zone: '左侧' },
+      { text: '空调', value: '空调', pinyin: 'kongtiao kt', type: 'ac', zone: '右前方' },
+      { text: '客厅灯', value: '客厅灯', pinyin: 'ketingdeng ktd', type: 'light', zone: '正前方' },
+      { text: '窗帘', value: '窗帘', pinyin: 'chuanglian cl', type: 'curtain', zone: '左前方' },
+      { text: '音箱', value: '音箱', pinyin: 'yinxiang yx', type: 'speaker', zone: '右侧' },
+      { text: '扫地机', value: '扫地机', pinyin: 'saodiji sdj', type: 'cleaner', zone: '地面' },
+      { text: '扫地机器人', value: '扫地机器人', pinyin: 'saodijiqiren sdjqr', type: 'cleaner', zone: '地面' },
+      { text: '洗衣机', value: '洗衣机', pinyin: 'xiyiji xyj', type: 'washer', zone: '阳台' },
+      { text: '加湿器', value: '加湿器', pinyin: 'jiashiqi jsq', type: 'humidifier', zone: '卧室' },
+      { text: '净化器', value: '净化器', pinyin: 'jinghuaqi jhq', type: 'purifier', zone: '客厅' },
+      { text: '路由器', value: '路由器', pinyin: 'luyouqi lyq', type: 'router', zone: '桌面' },
+      { text: '电脑', value: '电脑', pinyin: 'diannao dn', type: 'computer', zone: '桌面' },
+      { text: '平板', value: '平板', pinyin: 'pingban pb', type: 'tablet', zone: '随身' },
+      { text: '开关', value: '开关', pinyin: 'kaiguan kg', type: 'switch', zone: '墙面' },
+      { text: '传感器', value: '传感器', pinyin: 'chuanganqi cgq', type: 'sensor', zone: '未分区' },
+      { text: '门锁', value: '门锁', pinyin: 'mensuo ms', type: 'lock', zone: '门口' }
+    ]
+  },
+
+  commonPinyinWords() {
+    return [
+      { text: '沙发', value: '沙发', pinyin: 'shafa sf', type: 'switch', zone: '客厅' },
+      { text: '茶几', value: '茶几', pinyin: 'chaji cj', type: 'switch', zone: '客厅' },
+      { text: '桌子', value: '桌子', pinyin: 'zhuozi zz', type: 'switch', zone: '桌面' },
+      { text: '椅子', value: '椅子', pinyin: 'yizi yz', type: 'switch', zone: '桌面' },
+      { text: '床头灯', value: '床头灯', pinyin: 'chuangtoudeng ctd', type: 'light', zone: '卧室' },
+      { text: '台灯', value: '台灯', pinyin: 'taideng td', type: 'light', zone: '桌面' },
+      { text: '吊灯', value: '吊灯', pinyin: 'diaodeng dd', type: 'light', zone: '客厅' },
+      { text: '灯带', value: '灯带', pinyin: 'dengdai dd', type: 'light', zone: '客厅' },
+      { text: '插座', value: '插座', pinyin: 'chazuo cz', type: 'switch', zone: '墙面' },
+      { text: '排插', value: '排插', pinyin: 'paicha pc', type: 'switch', zone: '桌面' },
+      { text: '热水器', value: '热水器', pinyin: 'reshuiqi rsq', type: 'heater', zone: '卫生间' },
+      { text: '饮水机', value: '饮水机', pinyin: 'yinshuiji ysj', type: 'switch', zone: '厨房' },
+      { text: '空气净化器', value: '空气净化器', pinyin: 'kongqijinghuaqi kqjhq', type: 'purifier', zone: '客厅' },
+      { text: '加湿器', value: '加湿器', pinyin: 'jiashiqi jsq', type: 'humidifier', zone: '卧室' },
+      { text: '除湿机', value: '除湿机', pinyin: 'chushiji csj', type: 'switch', zone: '客厅' },
+      { text: '摄像头', value: '摄像头', pinyin: 'shexiangtou sxt', type: 'camera', zone: '门口' },
+      { text: '门铃', value: '门铃', pinyin: 'menling ml', type: 'camera', zone: '门口' },
+      { text: '门锁', value: '门锁', pinyin: 'mensuo ms', type: 'lock', zone: '门口' },
+      { text: '窗帘', value: '窗帘', pinyin: 'chuanglian cl', type: 'curtain', zone: '左前方' },
+      { text: '投影仪', value: '投影仪', pinyin: 'touyingyi tyy', type: 'tv', zone: '正前方' },
+      { text: '电视', value: '电视', pinyin: 'dianshi ds', type: 'tv', zone: '正前方' },
+      { text: '音箱', value: '音箱', pinyin: 'yinxiang yx', type: 'speaker', zone: '右侧' },
+      { text: '手机', value: '手机', pinyin: 'shouji sj', type: 'phone', zone: '随身' },
+      { text: '电脑', value: '电脑', pinyin: 'diannao dn', type: 'computer', zone: '桌面' },
+      { text: '平板', value: '平板', pinyin: 'pingban pb', type: 'tablet', zone: '随身' },
+      { text: '扫地机', value: '扫地机', pinyin: 'saodiji sdj', type: 'cleaner', zone: '地面' },
+      { text: '扫地机器人', value: '扫地机器人', pinyin: 'saodijiqiren sdjqr', type: 'cleaner', zone: '地面' },
+      { text: '洗衣机', value: '洗衣机', pinyin: 'xiyiji xyj', type: 'washer', zone: '阳台' },
+      { text: '冰箱', value: '冰箱', pinyin: 'bingxiang bx', type: 'fridge', zone: '厨房' },
+      { text: '烤箱', value: '烤箱', pinyin: 'kaoxiang kx', type: 'switch', zone: '厨房' },
+      { text: '微波炉', value: '微波炉', pinyin: 'weibolu wbl', type: 'switch', zone: '厨房' },
+      { text: '电饭煲', value: '电饭煲', pinyin: 'dianfanbao dfb', type: 'switch', zone: '厨房' },
+      { text: '油烟机', value: '油烟机', pinyin: 'youyanji yyj', type: 'fan', zone: '厨房' },
+      { text: '空调', value: '空调', pinyin: 'kongtiao kt', type: 'ac', zone: '右前方' },
+      { text: '风扇', value: '风扇', pinyin: 'fengshan fs', type: 'fan', zone: '左侧' },
+      { text: '客厅', value: '客厅', pinyin: 'keting kt' },
+      { text: '卧室', value: '卧室', pinyin: 'woshi ws' },
+      { text: '厨房', value: '厨房', pinyin: 'chufang cf' },
+      { text: '阳台', value: '阳台', pinyin: 'yangtai yt' },
+      { text: '卫生间', value: '卫生间', pinyin: 'weishengjian wsj' },
+      { text: '书房', value: '书房', pinyin: 'shufang sf' },
+      { text: '门口', value: '门口', pinyin: 'menkou mk' },
+      { text: '桌面', value: '桌面', pinyin: 'zhuomian zm' },
+      { text: '地面', value: '地面', pinyin: 'dimian dm' },
+      { text: '墙面', value: '墙面', pinyin: 'qiangmian qm' },
+      { text: '正前方', value: '正前方', pinyin: 'zhengqianfang zqf' },
+      { text: '左前方', value: '左前方', pinyin: 'zuoqianfang zqf' },
+      { text: '右前方', value: '右前方', pinyin: 'youqianfang yqf' },
+      { text: '随身', value: '随身', pinyin: 'suishen ss' },
+      { text: '未分区', value: '未分区', pinyin: 'weifenqu wfq' }
+    ]
+  },
+
+  pinyinSyllableMap() {
+    return {
+      a: ['啊'],
+      ai: ['爱'],
+      an: ['安'],
+      ang: ['昂'],
+      ba: ['吧', '把', '八'],
+      bai: ['白', '百'],
+      ban: ['板', '办'],
+      bao: ['包', '宝'],
+      bei: ['备', '杯'],
+      ben: ['本'],
+      bi: ['比'],
+      bian: ['边'],
+      biao: ['表'],
+      bing: ['冰'],
+      bo: ['波'],
+      bu: ['不', '部'],
+      ca: ['擦'],
+      cai: ['菜'],
+      can: ['餐'],
+      ce: ['侧'],
+      cha: ['茶', '插'],
+      chai: ['拆'],
+      chan: ['传'],
+      chang: ['长'],
+      chao: ['超'],
+      che: ['车'],
+      chen: ['尘'],
+      cheng: ['成'],
+      chi: ['池'],
+      chong: ['充'],
+      chou: ['抽'],
+      chu: ['厨', '除'],
+      chuan: ['传'],
+      chuang: ['窗', '床'],
+      ci: ['次'],
+      cong: ['从'],
+      da: ['大', '打'],
+      dai: ['带'],
+      dan: ['单'],
+      dao: ['到'],
+      de: ['的'],
+      deng: ['灯'],
+      di: ['地'],
+      dian: ['电', '点'],
+      diao: ['吊'],
+      ding: ['定'],
+      dong: ['动'],
+      du: ['读'],
+      duan: ['端'],
+      fang: ['房', '方'],
+      fan: ['饭'],
+      feng: ['风'],
+      fu: ['副'],
+      gai: ['盖'],
+      gan: ['感'],
+      gang: ['缸'],
+      gao: ['高'],
+      ge: ['个'],
+      gong: ['功'],
+      guan: ['关', '管'],
+      gui: ['柜'],
+      hao: ['好'],
+      he: ['盒'],
+      hong: ['红'],
+      hua: ['化'],
+      huan: ['换'],
+      ji: ['机', '几'],
+      jia: ['家', '加'],
+      jian: ['间', '件'],
+      jing: ['净'],
+      kai: ['开'],
+      kao: ['烤'],
+      ke: ['客'],
+      kong: ['空'],
+      kou: ['口'],
+      kuai: ['快'],
+      la: ['拉'],
+      lai: ['来'],
+      lan: ['蓝'],
+      leng: ['冷'],
+      li: ['里'],
+      lian: ['帘'],
+      liang: ['亮'],
+      ling: ['铃'],
+      lu: ['炉', '路'],
+      luyou: ['路由'],
+      men: ['门'],
+      mian: ['面'],
+      mi: ['米'],
+      nao: ['脑'],
+      pai: ['排'],
+      pan: ['盘'],
+      ping: ['平'],
+      qi: ['器'],
+      qian: ['前'],
+      qiang: ['墙'],
+      qing: ['清'],
+      qu: ['区'],
+      re: ['热'],
+      ren: ['人'],
+      ri: ['日'],
+      rou: ['柔'],
+      ru: ['入'],
+      sao: ['扫'],
+      sha: ['沙'],
+      shan: ['扇'],
+      shang: ['上'],
+      she: ['摄'],
+      shen: ['身'],
+      sheng: ['声'],
+      shi: ['湿', '室'],
+      shou: ['手'],
+      shu: ['书'],
+      shui: ['水'],
+      si: ['四'],
+      suo: ['锁'],
+      tai: ['台'],
+      tao: ['套'],
+      ti: ['体'],
+      tian: ['添'],
+      ting: ['厅'],
+      tou: ['头'],
+      tu: ['图'],
+      tuo: ['拖'],
+      wan: ['碗'],
+      wei: ['微', '卫'],
+      wen: ['温'],
+      wo: ['卧'],
+      xi: ['洗'],
+      xian: ['线'],
+      xiang: ['箱', '像'],
+      xiao: ['小'],
+      xing: ['星'],
+      ya: ['压'],
+      yan: ['烟'],
+      yang: ['阳'],
+      yao: ['遥'],
+      yi: ['椅', '衣', '仪'],
+      yin: ['音', '饮'],
+      you: ['油', '右'],
+      yu: ['浴'],
+      yuan: ['源'],
+      zai: ['在'],
+      zao: ['灶'],
+      zhi: ['智'],
+      zhong: ['中'],
+      zhu: ['主'],
+      zhuo: ['桌'],
+      zi: ['子'],
+      zou: ['走'],
+      zuo: ['左']
+    }
+  },
+
+  addUniqueImeCandidate(result, item) {
+    if (!item || !item.text) {
+      return
+    }
+    for (let index = 0; index < result.length; index++) {
+      if (result[index].text === item.text) {
+        return
+      }
+    }
+    result.push(item)
+  },
+
+  buildPinyinText(key) {
+    const map = this.pinyinSyllableMap()
+    const syllables = []
+    let cursor = 0
+    while (cursor < key.length) {
+      let found = ''
+      const maxLen = key.length - cursor > 6 ? 6 : key.length - cursor
+      for (let size = maxLen; size > 0; size--) {
+        const part = key.substring(cursor, cursor + size)
+        if (map[part]) {
+          found = part
+          break
+        }
+      }
+      if (!found) {
+        return ''
+      }
+      syllables.push(found)
+      cursor += found.length
+    }
+    let text = ''
+    for (let index = 0; index < syllables.length; index++) {
+      const words = map[syllables[index]]
+      text += words && words[0] ? words[0] : ''
+    }
+    return text
+  },
+
+  currentManualValue() {
+    if (this.manualFieldIndex === 0) {
+      return this.manualDeviceName
+    }
+    if (this.manualFieldIndex === 1) {
+      return this.manualDeviceType
+    }
+    return this.manualDeviceZone
+  },
+
+  setCurrentManualValue(value) {
+    if (this.manualFieldIndex === 0) {
+      this.manualDeviceName = value
+    } else if (this.manualFieldIndex === 1) {
+      this.manualDeviceType = value
+    } else {
+      this.manualDeviceZone = value
+    }
+    this.refreshManualInput()
+  },
+
+  imeMatches() {
+    if (this.pcImeCandidates && this.pcImeCandidates.length > 0) {
+      return this.pcImeCandidates
+    }
+    let dict = this.currentImeDictionary()
+    if (this.manualFieldIndex !== 1) {
+      dict = dict.concat(this.commonPinyinWords())
+    }
+    const key = (this.manualImeBuffer || '').toLowerCase()
+    const result = []
+    for (let index = 0; index < dict.length; index++) {
+      const item = dict[index]
+      const search = (item.pinyin || '') + ' ' + (item.text || '')
+      if (!key || search.toLowerCase().indexOf(key) >= 0) {
+        this.addUniqueImeCandidate(result, item)
+      }
+    }
+    if (key && result.length < 4 && this.manualFieldIndex !== 1) {
+      const builtText = this.buildPinyinText(key)
+      if (builtText) {
+        this.addUniqueImeCandidate(result, {
+          text: builtText,
+          value: builtText,
+          pinyin: key,
+          type: this.guessManualTypeFromPinyin(key),
+          zone: this.manualDeviceZone || '未分区'
+        })
+      }
+    }
+    if (key && result.length < 4 && this.manualFieldIndex === 0) {
+      this.addUniqueImeCandidate(result, { text: key, value: key, pinyin: key, type: this.guessManualTypeFromPinyin(key), zone: this.manualDeviceZone || '未分区' })
+    }
+    if (key && result.length < 4 && this.manualFieldIndex === 2) {
+      this.addUniqueImeCandidate(result, { text: key, value: key, pinyin: key })
+    }
+    return result
+  },
+
+  updateImeCandidates() {
+    const matches = this.imeMatches()
+    const pageSize = 3
+    const totalPages = Math.max(1, Math.ceil(matches.length / pageSize))
+    if (!this.candidatePageIndex || this.candidatePageIndex < 0) {
+      this.candidatePageIndex = 0
+    }
+    if (this.candidatePageIndex >= totalPages) {
+      this.candidatePageIndex = totalPages - 1
+    }
+    const start = this.candidatePageIndex * pageSize
+    this.imeBufferText = this.manualImeBuffer || '输入拼音'
+    this.candidateText1 = matches[start] ? matches[start].text : (this.manualImeBuffer || '手机')
+    this.candidateText2 = matches[start + 1] ? matches[start + 1].text : ''
+    this.candidateText3 = matches[start + 2] ? matches[start + 2].text : ''
+    this.candidateText4 = ''
+  },
+
+  prevCandidatePage() {
+    const matches = this.imeMatches()
+    const totalPages = Math.max(1, Math.ceil(matches.length / 3))
+    this.candidatePageIndex = (this.candidatePageIndex || 0) - 1
+    if (this.candidatePageIndex < 0) {
+      this.candidatePageIndex = totalPages - 1
+    }
+    this.updateImeCandidates()
+  },
+
+  nextCandidatePage() {
+    const matches = this.imeMatches()
+    const totalPages = Math.max(1, Math.ceil(matches.length / 3))
+    this.candidatePageIndex = (this.candidatePageIndex || 0) + 1
+    if (this.candidatePageIndex >= totalPages) {
+      this.candidatePageIndex = 0
+    }
+    this.updateImeCandidates()
+  },
+
+  fetchPcImeCandidates() {
+    const key = (this.manualImeBuffer || '').toLowerCase()
+    if (!key || this.manualFieldIndex === 1) {
+      this.pcImeCandidates = []
+      this.pcImeRequestKey = key
+      this.updateImeCandidates()
+      return
+    }
+    const token = (this.pcImeRequestToken || 0) + 1
+    this.pcImeRequestToken = token
+    this.pcImeRequestKey = key
+    fetch.fetch({
+      url: this.pcUrl.replace('/aiot-command', '/pinyin-candidates') + '?text=' + key + '&field=' + this.manualFieldIndex,
+      method: 'GET',
+      responseType: 'json',
+      success: (res) => {
+        if (token !== this.pcImeRequestToken || key !== this.manualImeBuffer) {
+          return
+        }
+        const data = res && res.data ? res.data : {}
+        const list = data.candidates || []
+        const result = []
+        for (let index = 0; index < list.length && result.length < 32; index++) {
+          const item = list[index]
+          const text = item.text || item.value || ''
+          if (text) {
+            result.push({
+              text: text,
+              value: item.value || text,
+              pinyin: key,
+              type: this.guessManualTypeFromPinyin(key),
+              zone: this.manualDeviceZone || '未分区'
+            })
+          }
+        }
+        if (result.length > 0) {
+          this.pcImeCandidates = result
+          this.candidatePageIndex = 0
+          this.updateImeCandidates()
+        }
+      },
+      fail: () => {
+        this.pcImeCandidates = []
+        this.updateImeCandidates()
+      }
+    })
+  },
+
+  guessManualTypeFromPinyin(key) {
+    if (key.indexOf('deng') >= 0 || key.indexOf('light') >= 0) {
+      return 'light'
+    }
+    if (key.indexOf('xiang') >= 0 || key.indexOf('fridge') >= 0) {
+      return 'fridge'
+    }
+    if (key.indexOf('shexiang') >= 0 || key.indexOf('camera') >= 0) {
+      return 'camera'
+    }
+    if (key.indexOf('kongtiao') >= 0 || key === 'ac') {
+      return 'ac'
+    }
+    if (key.indexOf('tv') >= 0 || key.indexOf('dianshi') >= 0) {
+      return 'tv'
+    }
+    return this.manualDeviceType || 'switch'
+  },
+
+  inputImeLetter(letter) {
+    this.resetManualCursorBlink()
+    this.manualImeBuffer = (this.manualImeBuffer || '') + letter
+    this.candidatePageIndex = 0
+    this.pcImeCandidates = []
+    this.updateImeCandidates()
+    this.fetchPcImeCandidates()
+  },
+
+  chooseCandidate(index) {
+    const matches = this.imeMatches()
+    const actualIndex = (this.candidatePageIndex || 0) * 3 + index
+    let item = matches[actualIndex]
+    if (!item && index === 0 && this.manualImeBuffer) {
+      item = { text: this.manualImeBuffer, value: this.manualImeBuffer, pinyin: this.manualImeBuffer }
+    }
+    if (!item || !item.text) {
+      return
+    }
+    this.setCurrentManualValue(item.value || item.text)
+    if (this.manualFieldIndex === 0) {
+      if (item.type) {
+        this.manualDeviceType = item.type
+      }
+      if (item.zone) {
+        this.manualDeviceZone = item.zone
+      }
+    }
+    this.manualImeBuffer = ''
+    this.candidatePageIndex = 0
+    this.pcImeCandidates = []
+    this.refreshManualInput()
+    this.resetManualCursorBlink()
+  },
+
+  chooseCandidateOne() { this.chooseCandidate(0) },
+  chooseCandidateTwo() { this.chooseCandidate(1) },
+  chooseCandidateThree() { this.chooseCandidate(2) },
+  chooseCandidateFour() { this.chooseCandidate(3) },
+
+  qKeyQ() { this.inputImeLetter('q') },
+  qKeyW() { this.inputImeLetter('w') },
+  qKeyE() { this.inputImeLetter('e') },
+  qKeyR() { this.inputImeLetter('r') },
+  qKeyT() { this.inputImeLetter('t') },
+  qKeyY() { this.inputImeLetter('y') },
+  qKeyU() { this.inputImeLetter('u') },
+  qKeyI() { this.inputImeLetter('i') },
+  qKeyO() { this.inputImeLetter('o') },
+  qKeyP() { this.inputImeLetter('p') },
+  qKeyA() { this.inputImeLetter('a') },
+  qKeyS() { this.inputImeLetter('s') },
+  qKeyD() { this.inputImeLetter('d') },
+  qKeyF() { this.inputImeLetter('f') },
+  qKeyG() { this.inputImeLetter('g') },
+  qKeyH() { this.inputImeLetter('h') },
+  qKeyJ() { this.inputImeLetter('j') },
+  qKeyK() { this.inputImeLetter('k') },
+  qKeyL() { this.inputImeLetter('l') },
+  qKeyZ() { this.inputImeLetter('z') },
+  qKeyX() { this.inputImeLetter('x') },
+  qKeyC() { this.inputImeLetter('c') },
+  qKeyV() { this.inputImeLetter('v') },
+  qKeyB() { this.inputImeLetter('b') },
+  qKeyN() { this.inputImeLetter('n') },
+  qKeyM() { this.inputImeLetter('m') },
+
+  qKeySpace() {
+    if (this.manualImeBuffer) {
+      this.chooseCandidate(0)
+    }
+  },
+
+  keyClearInput() {
+    this.resetManualCursorBlink()
+    this.manualImeBuffer = ''
+    this.candidatePageIndex = 0
+    this.pcImeCandidates = []
+    this.setCurrentManualValue('')
+    this.updateImeCandidates()
+  },
+
+  keyBack() {
+    this.resetManualCursorBlink()
+    if (this.manualImeBuffer && this.manualImeBuffer.length > 0) {
+      this.manualImeBuffer = this.manualImeBuffer.substring(0, this.manualImeBuffer.length - 1)
+      this.candidatePageIndex = 0
+      this.pcImeCandidates = []
+      this.updateImeCandidates()
+      this.fetchPcImeCandidates()
+    } else {
+      const value = this.currentManualValue() || ''
+      if (value.length > 0) {
+        this.setCurrentManualValue(value.substring(0, value.length - 1))
+      }
+    }
+  },
+
+  manualNextField() {
+    this.resetManualCursorBlink()
+    this.manualFieldIndex = (this.manualFieldIndex + 1) % 3
+    this.manualImeBuffer = ''
+    this.candidatePageIndex = 0
+    this.pcImeCandidates = []
+    this.refreshManualInput()
+    this.resetManualCursorBlink()
+  },
+
+  quickNamePhone() {
+    this.manualDeviceName = '手机'
+    this.manualDeviceType = 'phone'
+    this.manualDeviceZone = '随身'
+    this.refreshManualInput()
+  },
+
+  quickNameFridge() {
+    this.manualDeviceName = '冰箱'
+    this.manualDeviceType = 'fridge'
+    this.manualDeviceZone = '厨房'
+    this.refreshManualInput()
+  },
+
+  quickNameCamera() {
+    this.manualDeviceName = '摄像头'
+    this.manualDeviceType = 'camera'
+    this.manualDeviceZone = '门口'
+    this.refreshManualInput()
+  },
+
+  quickZoneDesk() {
+    this.manualDeviceZone = '桌面'
+    this.manualFieldIndex = 2
+    this.refreshManualInput()
+  },
+
+  makeManualDeviceId(name) {
+    let ascii = ''
+    for (let index = 0; index < name.length; index++) {
+      const ch = name.charAt(index)
+      if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')) {
+        ascii += ch.toLowerCase()
+      }
+    }
+    if (ascii) {
+      return ascii
+    }
+    return 'watch_dev_' + (this.devices.length + 1)
+  },
+
+  saveManualDevice() {
+    const name = this.manualDeviceName || ''
+    const deviceType = this.manualDeviceType || 'switch'
+    const zone = this.manualDeviceZone || '未分区'
+    if (!name) {
+      this.managementMessage = '设备名称不能为空'
+      this.showSection('manage')
+      return
+    }
+    const deviceId = this.makeManualDeviceId(name)
+    let foundIndex = -1
+    for (let index = 0; index < this.devices.length; index++) {
+      if (this.devices[index].id === deviceId || this.devices[index].name === name) {
+        foundIndex = index
+      }
+    }
+    const device = { id: deviceId, name: name, type: deviceType, zone: zone }
+    if (foundIndex >= 0) {
+      this.devices[foundIndex] = device
+      this.deviceIndex = foundIndex
+      this.managementMessage = '已更新设备：' + name
+    } else {
+      this.devices.push(device)
+      this.deviceIndex = this.devices.length - 1
+      this.managementMessage = '已手动添加：' + name
+    }
+    this.ensureRuntimeStates()
+    this.syncCurrentDevice()
+    this.updateLearningSelection()
+    this.sendWatchConfig('manual_add_device', this.managementMessage)
+    this.actionConfigMessage = '已添加设备：' + name + '，请继续绑定动作'
+    this.openActionConfig()
+  },
+
+  localDeleteDevice() {
+    if (this.devices.length <= 1) {
+      this.managementMessage = '至少保留一个设备'
+      return
+    }
+    const removedId = this.currentDeviceId
+    const removedName = this.currentDeviceName
+    this.devices.splice(this.deviceIndex, 1)
+    const remainingActions = []
+    for (let index = 0; index < this.actions.length; index++) {
+      const actionDeviceId = this.actions[index].deviceId || this.actions[index].targetDeviceId || ''
+      if (actionDeviceId !== removedId) {
+        remainingActions.push(this.actions[index])
+      }
+    }
+    this.actions = remainingActions
+    if (this.deviceIndex >= this.devices.length) {
+      this.deviceIndex = this.devices.length - 1
+    }
+    this.syncCurrentDevice()
+    this.updateLearningSelection()
+    this.managementMessage = '已删除 ' + removedName + ' 及其动作'
+    this.sendWatchConfig('delete_device', this.managementMessage)
+  },
+
+  openActionConfig() {
+    this.syncCurrentDevice()
+    this.updateLearningSelection()
+    this.updateBindingOverview()
+    this.actionConfigMessage = '请选择要配置的设备指令'
+    this.managementSubMessage = '先配置指令，再选择默认动作或自定义训练动作'
+    this.showSection('actionConfig')
+  },
+
+  localAddAction() {
+    this.openActionConfig()
+  },
+
+  addOpenAction() { this.openCommandBinding('开启', 'power_on') },
+  addCloseAction() { this.openCommandBinding('关闭', 'power_off') },
+  addIncreaseAction() { this.openCommandBinding('调高', 'value_up') },
+  addDecreaseAction() { this.openCommandBinding('调低', 'value_down') },
+  addCustomAction() { this.openCommandBinding('自定义', 'custom_command') },
+
+  openCommandBinding(title, commandAction) {
+    this.syncCurrentDevice()
+    this.selectedCommandTitle = title + '指令'
+    this.selectedCommandKey = commandAction
+    this.selectedCommandAction = commandAction
+    const existing = this.findBoundCommandAction(commandAction)
+    if (existing) {
+      this.trainingActionId = existing.id
+      this.selectedTriggerName = existing.triggerName || existing.name || '已绑定动作'
+      this.selectedTriggerCommand = existing.triggerCommand || existing.command || ''
+    } else {
+      this.selectedTriggerName = '未绑定'
+      this.selectedTriggerCommand = ''
+    }
+    this.updateBindingOverview()
+    this.actionConfigMessage = this.selectedCommandTitle + ' / 请选择触发动作'
+    this.showSection('actionTrain')
+  },
+
+  bindTriggerSwingUp() { this.bindExistingTrigger('上摆', 'swing_up') },
+  bindTriggerSwingDown() { this.bindExistingTrigger('下摆', 'swing_down') },
+  bindTriggerRotateCw() { this.bindExistingTrigger('顺时针', 'rotate_cw') },
+  bindTriggerRotateCcw() { this.bindExistingTrigger('逆时针', 'rotate_ccw') },
+
+  bindExistingTrigger(triggerName, triggerCommand) {
+    const conflict = this.findTriggerConflict(triggerCommand, this.selectedCommandAction)
+    if (conflict) {
+      this.actionConfigMessage = triggerName + ' 已用于「' + this.commandActionLabel(conflict.commandAction) + '」'
+      this.bindingWarningText = '同一动作不能同时触发多个指令'
+      this.managementMessage = this.actionConfigMessage
+      return
+    }
+    const action = this.upsertCommandBinding(triggerName, triggerCommand, false)
+    this.trainingActionId = action.id
+    this.selectedTriggerName = triggerName
+    this.selectedTriggerCommand = triggerCommand
+    this.actionConfigMessage = this.selectedCommandTitle + ' 已绑定：' + triggerName
+    this.managementMessage = this.actionConfigMessage
+    this.sendWatchConfig('bind_command_action', this.actionConfigMessage)
+  },
+
+  findTriggerConflict(triggerCommand, commandAction) {
+    for (let index = 0; index < this.actions.length; index++) {
+      const action = this.actions[index]
+      const deviceId = action.deviceId || action.targetDeviceId || ''
+      const trigger = action.triggerCommand || action.command || ''
+      if (deviceId === this.currentDeviceId && trigger === triggerCommand &&
+        action.commandAction && action.commandAction !== commandAction) {
+        return action
+      }
+    }
+    return null
+  },
+
+  clearSelectedCommandBinding() {
+    const existing = this.findBoundCommandAction(this.selectedCommandAction)
+    if (!existing) {
+      this.actionConfigMessage = this.selectedCommandTitle + ' 尚未绑定动作'
+      return
+    }
+    const remaining = []
+    for (let index = 0; index < this.actions.length; index++) {
+      if (this.actions[index].id !== existing.id) {
+        remaining.push(this.actions[index])
+      }
+    }
+    this.actions = remaining
+    this.trainingActionId = ''
+    this.selectedTriggerName = '未绑定'
+    this.selectedTriggerCommand = ''
+    this.updateLearningSelection()
+    this.updateBindingOverview()
+    this.actionConfigMessage = this.selectedCommandTitle + ' 已解除绑定'
+    this.managementMessage = this.actionConfigMessage
+    this.sendWatchConfig('unbind_command_action', this.actionConfigMessage)
+  },
+
+  openCustomTriggerTraining() {
+    const action = this.upsertCommandBinding('自定义动作', 'custom_train_' + this.selectedCommandKey, true)
+    this.trainingActionId = action.id
+    this.selectedTriggerName = '自定义动作'
+    this.selectedTriggerCommand = action.command
+    this.selectedActionFlowTitle = this.selectedCommandTitle + ' · 自定义动作'
+    this.selectedActionFlowCommand = action.command
+    this.updateLearningSelection()
+    this.trainingHintText = '请在 PC 端输入第 1/10 组肌电 + IMU 数据'
+    this.sendWatchConfig('start_custom_training', '开始训练：' + this.selectedActionFlowTitle)
+    this.showSection('customTrain')
+  },
+
+  finishCustomTraining() {
+    this.selectedTriggerName = '自定义动作'
+    this.updateBindingOverview()
+    this.actionConfigMessage = this.selectedCommandTitle + ' 已绑定自定义动作'
+    this.managementMessage = this.actionConfigMessage
+    this.managementSubMessage = '自定义动作可继续采集训练，也可同步到 PC'
+    this.sendWatchConfig('finish_custom_training', this.actionConfigMessage)
+    this.showSection('actionTrain')
+  },
+
+  finishActionBinding() {
+    this.updateBindingOverview()
+    this.actionConfigMessage = this.selectedCommandTitle + ' 绑定完成：' + this.selectedTriggerName
+    this.managementMessage = this.actionConfigMessage
+    this.managementSubMessage = '可继续配置其他指令，最后完成配置同步 PC'
+    this.sendWatchConfig('finish_command_binding', this.actionConfigMessage)
+    this.showSection('actionConfig')
+  },
+
+  findBoundCommandAction(commandAction) {
+    for (let index = 0; index < this.actions.length; index++) {
+      const action = this.actions[index]
+      const deviceId = action.deviceId || action.targetDeviceId || ''
+      if (deviceId === this.currentDeviceId && action.commandAction === commandAction) {
+        return action
+      }
+    }
+    return null
+  },
+
+  commandActionLabel(commandAction) {
+    if (commandAction === 'power_on') {
+      return '开启'
+    }
+    if (commandAction === 'power_off') {
+      return '关闭'
+    }
+    if (commandAction === 'value_up') {
+      return '调高'
+    }
+    if (commandAction === 'value_down') {
+      return '调低'
+    }
+    if (commandAction === 'custom_command') {
+      return '自定义'
+    }
+    return commandAction || '指令'
+  },
+
+  bindingTriggerText(commandAction) {
+    const action = this.findBoundCommandAction(commandAction)
+    if (!action) {
+      return '未绑定'
+    }
+    return action.triggerName || action.triggerCommand || action.command || '已绑定'
+  },
+
+  updateBindingOverview() {
+    const commandActions = ['power_on', 'power_off', 'value_up', 'value_down']
+    let boundCount = 0
+    const used = []
+    let conflictText = ''
+    for (let index = 0; index < commandActions.length; index++) {
+      const action = this.findBoundCommandAction(commandActions[index])
+      if (action) {
+        boundCount += 1
+        const trigger = action.triggerCommand || action.command || ''
+        if (trigger) {
+          for (let usedIndex = 0; usedIndex < used.length; usedIndex++) {
+            if (used[usedIndex] === trigger) {
+              conflictText = '提示：同一动作绑定多个指令'
+            }
+          }
+          used.push(trigger)
+        }
+      }
+    }
+    this.bindingOpenText = this.bindingTriggerText('power_on')
+    this.bindingCloseText = this.bindingTriggerText('power_off')
+    this.bindingUpText = this.bindingTriggerText('value_up')
+    this.bindingDownText = this.bindingTriggerText('value_down')
+    const custom = this.findBoundCommandAction('custom_command')
+    this.bindingCustomText = custom ? this.bindingTriggerText('custom_command') : '可添加训练动作'
+    this.bindingProgressText = boundCount + '/4 指令已绑定'
+    if (conflictText) {
+      this.bindingWarningText = conflictText
+    } else if (boundCount >= 4) {
+      this.bindingWarningText = '默认映射完整，可同步 PC'
+    } else {
+      this.bindingWarningText = '未绑定指令可继续配置'
+    }
+  },
+
+  upsertCommandBinding(triggerName, triggerCommand, custom) {
+    let action = this.findBoundCommandAction(this.selectedCommandAction)
+    const actionId = this.currentDeviceId + '_' + this.selectedCommandAction
+    const actionName = this.currentDeviceName + this.selectedCommandTitle
+    if (!action) {
+      action = {
+        id: actionId,
+        name: actionName,
+        command: triggerCommand,
+        commandAction: this.selectedCommandAction,
+        triggerName: triggerName,
+        triggerCommand: triggerCommand,
+        isCustomTrigger: custom,
+        description: 'command-action binding',
+        deviceId: this.currentDeviceId,
+        targetDeviceId: this.currentDeviceId,
+        deviceName: this.currentDeviceName
+      }
+      this.actions.push(action)
+    } else {
+      action.name = actionName
+      action.command = triggerCommand
+      action.commandAction = this.selectedCommandAction
+      action.triggerName = triggerName
+      action.triggerCommand = triggerCommand
+      action.isCustomTrigger = custom
+      action.deviceId = this.currentDeviceId
+      action.targetDeviceId = this.currentDeviceId
+      action.deviceName = this.currentDeviceName
+    }
+    this.updateLearningSelection()
+    this.updateCurrentAction()
+    this.updateBindingOverview()
+    return action
+  },
+
+  addActionByCommand(suffix, command, silent) {
+    for (let actionIndex = 0; actionIndex < this.actions.length; actionIndex++) {
+      const action = this.actions[actionIndex]
+      const deviceId = action.deviceId || action.targetDeviceId || ''
+      if (deviceId === this.currentDeviceId && action.command === command) {
+        this.trainingActionId = action.id
+        this.updateLearningSelection()
+        this.actionConfigMessage = '已存在：' + (action.name || command)
+        this.managementMessage = this.actionConfigMessage
+        return action
+      }
+    }
+    const actionId = this.currentDeviceId + '_' + command
+    const actionName = this.currentDeviceName + suffix
+    this.actions.push({
+      id: actionId,
+      name: actionName,
+      command: command,
+      description: 'AIoT watch action config',
+      deviceId: this.currentDeviceId,
+      targetDeviceId: this.currentDeviceId,
+      deviceName: this.currentDeviceName
+    })
+    this.trainingActionId = actionId
+    this.updateLearningSelection()
+    this.updateCurrentAction()
+    this.actionConfigMessage = '已添加：' + actionName
+    this.managementMessage = this.actionConfigMessage
+    if (!silent) {
+      this.sendWatchConfig('add_action', this.actionConfigMessage)
+    }
+    return this.actions[this.actions.length - 1]
+  },
+
+  finishActionConfig() {
+    this.syncCurrentDevice()
+    this.updateLearningSelection()
+    this.managementMessage = this.currentDeviceName + ' 动作配置完成'
+    this.managementSubMessage = this.currentActionCountText + ' / 可进入 AI 学习采集样本'
+    this.actionConfigMessage = this.currentActionCountText + ' / 已完成配置，可继续添加或删除动作'
+    this.sendWatchConfig('finish_action_config', this.managementMessage)
+    this.showSection('manage')
+  },
+
+  finishActionTraining() {
+    this.syncCurrentDevice()
+    this.updateLearningSelection()
+    this.actionConfigMessage = this.trainingActionName + ' 已绑定，可继续选择其他动作'
+    this.managementMessage = this.actionConfigMessage
+    this.managementSubMessage = '如已采满 10 组，可训练模型后再完成配置'
+    this.sendWatchConfig('finish_action_training', this.actionConfigMessage)
+    this.showSection('actionConfig')
+  },
+
+  localDeleteAction() {
+    const currentActions = this.getCurrentActions()
+    if (currentActions.length < 1) {
+      this.managementMessage = '当前设备没有可删除动作'
+      return
+    }
+    let removedAction = currentActions[currentActions.length - 1]
+    for (let index = 0; index < currentActions.length; index++) {
+      if (currentActions[index].id === this.trainingActionId) {
+        removedAction = currentActions[index]
+      }
+    }
+    const remaining = []
+    for (let index = 0; index < this.actions.length; index++) {
+      if (this.actions[index].id !== removedAction.id) {
+        remaining.push(this.actions[index])
+      }
+    }
+    this.actions = remaining
+    this.trainingActionId = ''
+    this.updateLearningSelection()
+    this.updateBindingOverview()
+    this.managementMessage = '已删除动作：' + (removedAction.name || removedAction.command)
+    this.sendWatchConfig('delete_action', this.managementMessage)
+  },
+
+  sendLocalConfig() {
+    this.configVersion += 1
+    this.managementMessage = '正在同步完整配置 #' + this.configVersion
+    this.managementSubMessage = '已点击同步，等待 PC 回执...'
+    this.sendWatchConfig('sync_config', '完整配置已提交 #' + this.configVersion)
+  },
+
+  sendWatchConfig(operation, label) {
+    if (operation !== 'sync_config') {
+      this.configVersion += 1
+    }
+    const payload = {
+      type: 'watch_input_command',
+      origin: 'watch',
+      inputSource: 'AIoT本地管理',
+      sourceText: operation,
+      label: label,
+      operation: operation,
+      targetDeviceId: this.currentDeviceId,
+      targetDeviceName: this.currentDeviceName,
+      devices: this.devices,
+      actions: this.actions,
+      settings: {
+        safetyGuardEnabled: this.safetyGuardEnabled,
+        safetyThreshold: this.safetyThreshold,
+        operationMode: this.operationMode
+      },
+      configVersion: this.configVersion
+    }
+    fetch.fetch({
+      url: this.pcUrl,
+      method: 'POST',
+      responseType: 'json',
+      header: { 'Content-Type': 'application/json' },
+      data: JSON.stringify(payload),
+      success: () => {
+        this.managementMessage = label + ' · 已同步 PC'
+        this.managementSubMessage = 'PC 已接收：' + operation + ' / v' + this.configVersion
+        this.connectionBadge = 'ONLINE'
+      },
+      fail: () => {
+        this.managementMessage = label + ' · 本地已保存，PC 待同步'
+        this.managementSubMessage = '请确认上位机 8787 服务已启动'
+        this.connectionBadge = 'OFFLINE'
+      }
+    })
+  },
+
+  openLearning() {
+    this.showSection('learning')
+    this.updateLearningSelection()
+  },
+
+  openCopilot() {
+    this.showSection('copilot')
+    this.copilotHintText = this.connectionBadge === 'ONLINE' ? '双端链路在线 · 可开始闭环演示' : '等待 PC 上位机连接'
+  },
+
+  runContestDemo() {
+    this.copilotHintText = '已请求 PC 启动 AI 闭环演示'
+    this.decisionExplainText = '演示将依次展示空间校准、目标锁定、特征融合、安全判定和设备执行。'
+    this.postToPc({
+      command: 'closed_loop_demo',
+      label: 'AI 决策闭环演示',
+      inputSource: 'AIoT 决策舱',
+      confidence: 96
+    }, 'AI 闭环演示已提交')
+  },
+
+  openDevices() {
+    this.showSection('devices')
+    this.syncCurrentDevice()
+  },
+
+  openManage() {
+    this.showSection('manage')
+    this.syncCurrentDevice()
+    this.actionConfigMessage = this.currentActionCountText + ' / 点击配置动作继续绑定'
+    this.managementMessage = '当前：' + this.currentDeviceName
+    this.managementSubMessage = '添加设备、配置动作后会自动同步 PC'
+  },
+
+  openStatus() {
+    this.showSection('status')
+  },
+
+  openAbout() {
+    this.showSection('about')
+  },
+
+  showSection(section) {
+    this.homeVisible = section === 'home'
+    this.copilotVisible = section === 'copilot'
+    this.learningVisible = section === 'learning'
+    this.devicesVisible = section === 'devices'
+    this.manageVisible = section === 'manage'
+    this.actionConfigVisible = section === 'actionConfig'
+    this.actionTrainVisible = section === 'actionTrain'
+    this.customTrainVisible = section === 'customTrain'
+    this.manualInputVisible = section === 'manual'
+    this.statusVisible = section === 'status'
+    this.aboutVisible = section === 'about'
+    if (section === 'manual') {
+      this.focusManualInput()
+    } else {
+      this.stopManualCursorBlink()
+    }
+  },
+
+  goHome() {
+    this.showSection('home')
+  },
+
+  handleSwipe() {
+    if (this.customTrainVisible) {
+      this.showSection('actionTrain')
+      return true
+    }
+    if (this.actionTrainVisible) {
+      this.openActionConfig()
+      return true
+    }
+    if (this.actionConfigVisible) {
+      this.openManage()
+      return true
+    }
+    if (this.manualInputVisible) {
+      this.openManage()
+      return true
+    }
+    if (this.manageVisible) {
+      this.openDevices()
+      return true
+    }
+    if (this.copilotVisible) {
+      this.goHome()
+      return true
+    }
+    if (!this.homeVisible) {
+      this.goHome()
+      return true
+    }
+    return false
+  },
+
+  onBackPress() {
+    if (this.customTrainVisible) {
+      this.showSection('actionTrain')
+      return true
+    }
+    if (this.actionTrainVisible) {
+      this.openActionConfig()
+      return true
+    }
+    if (this.actionConfigVisible) {
+      this.openManage()
+      return true
+    }
+    if (this.manualInputVisible) {
+      this.openManage()
+      return true
+    }
+    if (this.manageVisible) {
+      this.openDevices()
+      return true
+    }
+    if (this.copilotVisible) {
+      this.goHome()
+      return true
+    }
+    if (!this.homeVisible) {
+      this.goHome()
+      return true
+    }
+    return false
+  },
+
+  clamp(value, min, max) {
+    if (value < min) {
+      return min
+    }
+    if (value > max) {
+      return max
+    }
+    return value
+  }
+}
+</script>
+
+<style>
+.page {
+  width: 100%;
+  height: 100%;
+  background-color: #070B12;
+  flex-direction: column;
+}
+
+.home {
+  width: 100%;
+  height: 100%;
+  padding-left: 34px;
+  padding-right: 34px;
+  padding-top: 15px;
+  padding-bottom: 18px;
+  flex-direction: column;
+}
+
+.page-grow {
+  flex: 1;
+  min-height: 8px;
+}
+
+.sub-page {
+  width: 100%;
+  height: 100%;
+  padding-left: 32px;
+  padding-right: 32px;
+  padding-top: 14px;
+  padding-bottom: 12px;
+  flex-direction: column;
+}
+
+.copilot-page {
+  padding-left: 32px;
+  padding-right: 32px;
+  padding-top: 17px;
+  padding-bottom: 8px;
+}
+
+.hero {
+  width: 100%;
+  height: 103px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.clock-row {
+  width: 100%;
+  height: 30px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.clock-left {
+  width: 25%;
+  height: 30px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.clock-brand {
+  width: 35%;
+  height: 30px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.clock-brand-text {
+  color: #57D4C2;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.clock-right {
+  width: 40%;
+  height: 30px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.clock-time {
+  color: #FFFFFF;
+  font-size: 21px;
+  font-weight: bold;
+}
+
+.clock-date {
+  color: #9BA8BC;
+  font-size: 9px;
+}
+
+.clock-sync {
+  height: 17px;
+  margin-left: 6px;
+  padding-left: 5px;
+  border-left-width: 1px;
+  border-left-color: #26364A;
+  flex-direction: row;
+  align-items: center;
+}
+
+.clock-sync-dot {
+  color: #57D4C2;
+  font-size: 8px;
+  margin-right: 3px;
+}
+
+.clock-sync-text {
+  color: #57D4C2;
+  font-size: 9px;
+  font-weight: bold;
+}
+
+.safe-header {
+  width: 100%;
+  height: 58px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.eyebrow,
+.page-kicker {
+  width: 100%;
+  color: #57D4C2;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.title {
+  width: 100%;
+  color: #FFFFFF;
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.subtitle {
+  width: 100%;
+  color: #9BA8BC;
+  font-size: 14px;
+  text-align: center;
+}
+
+.page-title {
+  width: 100%;
+  color: #FFFFFF;
+  font-size: 23px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 2px;
+}
+
+.status-card {
+  width: 100%;
+  height: 101px;
+  background-color: #121A27;
+  border-radius: 9px;
+  padding: 11px;
+  margin-bottom: 6px;
+  flex-direction: column;
+}
+
+.status-head,
+.current-line {
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.status-label {
+  color: #AAB5C7;
+  font-size: 12px;
+}
+
+.status-badge {
+  color: #57D4C2;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status-main {
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 3px;
+}
+
+.current-line {
+  margin-top: 4px;
+}
+
+.current-name {
+  color: #DCE4F0;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.current-state {
+  color: #9BA8BC;
+  font-size: 12px;
+}
+
+.status-command {
+  color: #6FE4D1;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+
+.menu-row {
+  width: 100%;
+  height: 84px;
+  flex-direction: row;
+  margin-top: 6px;
+}
+
+.menu-btn {
+  width: 48%;
+  height: 80px;
+  border-radius: 8px;
+  margin-right: 4%;
+  padding: 11px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.last {
+  margin-right: 0;
+}
+
+.primary {
+  background-color: #244A7A;
+}
+
+.green {
+  background-color: #1D5B50;
+}
+
+.orange {
+  background-color: #714622;
+}
+
+.purple {
+  background-color: #4C386E;
+}
+
+.cyan {
+  background-color: #225A68;
+}
+
+.scene {
+  background-color: #624A27;
+}
+
+.danger {
+  background-color: #7C3446;
+}
+
+.menu-title {
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.menu-sub {
+  color: #D3D9E3;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.decision-strip {
+  width: 100%;
+  height: 52px;
+  background-color: #172B3A;
+  border-radius: 8px;
+  border-left-width: 3px;
+  border-left-color: #57D4C2;
+  margin-top: 6px;
+  padding: 7px 10px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.decision-strip-left {
+  flex-direction: column;
+  justify-content: center;
+}
+
+.decision-strip-kicker {
+  color: #57D4C2;
+  font-size: 8px;
+  font-weight: bold;
+}
+
+.decision-strip-title {
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 2px;
+}
+
+.decision-strip-right {
+  flex-direction: row;
+  align-items: center;
+}
+
+.decision-strip-stage {
+  color: #D7E3ED;
+  font-size: 10px;
+}
+
+.decision-strip-arrow {
+  color: #57D4C2;
+  font-size: 22px;
+  margin-left: 7px;
+}
+
+.copilot-hero-card,
+.copilot-flow-card,
+.copilot-note-card {
+  width: 100%;
+  background-color: #121A27;
+  border-radius: 8px;
+  padding: 8px;
+  flex-direction: column;
+}
+
+.copilot-hero-card {
+  height: 78px;
+  border-left-width: 3px;
+  border-left-color: #57D4C2;
+}
+
+.copilot-hero-head {
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.copilot-hero-label,
+.copilot-metric-label {
+  color: #8FA1B9;
+  font-size: 10px;
+}
+
+.copilot-hero-confidence {
+  color: #57D4C2;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.copilot-hero-main {
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 3px;
+}
+
+.copilot-hero-sub {
+  color: #CDD7E4;
+  font-size: 9px;
+  margin-top: 1px;
+}
+
+.copilot-hero-evidence {
+  color: #6FE4D1;
+  font-size: 8px;
+  margin-top: 2px;
+}
+
+.copilot-flow-card {
+  height: 82px;
+  margin-top: 4px;
+}
+
+.copilot-flow-title {
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.copilot-flow-row {
+  width: 100%;
+  height: 51px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 3px;
+}
+
+.copilot-flow-step {
+  width: 22%;
+  height: 49px;
+  border-radius: 6px;
+  padding: 3px 2px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.copilot-step-idle {
+  background-color: #1A2635;
+}
+
+.copilot-step-active {
+  background-color: #305A65;
+}
+
+.copilot-step-done {
+  background-color: #1D5B50;
+}
+
+.copilot-flow-index {
+  color: #8FA1B9;
+  font-size: 8px;
+}
+
+.copilot-flow-name {
+  color: #FFFFFF;
+  font-size: 8px;
+  font-weight: bold;
+  margin-top: 1px;
+  text-align: center;
+}
+
+.copilot-flow-value {
+  color: #BFD5DD;
+  font-size: 8px;
+  margin-top: 1px;
+  text-align: center;
+}
+
+.copilot-flow-arrow {
+  color: #57D4C2;
+  font-size: 13px;
+}
+
+.copilot-metric-row {
+  width: 100%;
+  height: 40px;
+  flex-direction: row;
+  margin-top: 4px;
+}
+
+.copilot-metric {
+  width: 48%;
+  height: 40px;
+  background-color: #182A3C;
+  border-radius: 6px;
+  margin-right: 4%;
+  padding: 6px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.copilot-metric-last {
+  margin-right: 0;
+}
+
+.copilot-metric-value {
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: bold;
+  margin-top: 2px;
+}
+
+.copilot-note-card {
+  height: 45px;
+  margin-top: 4px;
+}
+
+.copilot-note-title {
+  color: #F4C55F;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.copilot-note-text {
+  color: #C4D0DE;
+  font-size: 8px;
+  margin-top: 2px;
+}
+
+.copilot-dock {
+  width: 100%;
+  height: 62px;
+  background-color: #101C2B;
+  border-radius: 8px;
+  padding: 8px 10px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.copilot-dock-main {
+  color: #57D4C2;
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.copilot-dock-sub {
+  color: #8FA1B9;
+  font-size: 8px;
+  text-align: center;
+  margin-top: 4px;
+}
+
+.copilot-bottom-tip {
+  width: 100%;
+  height: 18px;
+  color: #57D4C2;
+  font-size: 8px;
+  text-align: center;
+  margin-top: 4px;
+}
+
+.gesture-dock,
+.learning-dock,
+.device-dock,
+.status-dock {
+  width: 100%;
+  background-color: #101C2B;
+  border-radius: 8px;
+}
+
+.gesture-dock {
+  height: 78px;
+  padding: 7px 10px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.dock-head {
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dock-title {
+  color: #DCE4F0;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.dock-link {
+  color: #57D4C2;
+  font-size: 10px;
+}
+
+.dock-step-row {
+  width: 100%;
+  height: 34px;
+  flex-direction: row;
+  margin-top: 4px;
+}
+
+.dock-step {
+  width: 32%;
+  height: 33px;
+  background-color: #182A3C;
+  border-radius: 6px;
+  margin-right: 2%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.dock-step-last {
+  margin-right: 0;
+}
+
+.dock-step-title {
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.dock-step-sub {
+  color: #8FA1B9;
+  font-size: 8px;
+  margin-top: 1px;
+}
+
+.dock-status {
+  width: 100%;
+  color: #57D4C2;
+  font-size: 8px;
+  text-align: center;
+  margin-top: 3px;
+}
+
+.learning-dock {
+  height: 66px;
+  padding: 7px 10px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.learning-dock-title {
+  width: 100%;
+  color: #57D4C2;
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.learning-step-row {
+  width: 100%;
+  height: 18px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 3px;
+}
+
+.learning-step {
+  color: #8F9DB1;
+  font-size: 10px;
+}
+
+.learning-step-active {
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+.learning-arrow {
+  color: #57D4C2;
+  font-size: 14px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.learning-dock-tip {
+  width: 100%;
+  color: #AAB5C7;
+  font-size: 9px;
+  text-align: center;
+  margin-top: 2px;
+}
+
+.device-dock {
+  height: 66px;
+  padding: 6px 9px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.device-dock-main {
+  width: 100%;
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 2px;
+}
+
+.device-dock-sub {
+  width: 100%;
+  color: #8FA1B9;
+  font-size: 8px;
+  text-align: center;
+  margin-top: 1px;
+}
+
+.status-dock {
+  height: 78px;
+  padding: 8px;
+  flex-direction: row;
+}
+
+.status-dock-cell {
+  width: 32%;
+  height: 60px;
+  margin-right: 2%;
+  background-color: #182A3C;
+  border-radius: 6px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-dock-last {
+  margin-right: 0;
+}
+
+.status-dock-label {
+  color: #8FA1B9;
+  font-size: 9px;
+}
+
+.status-dock-value {
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 3px;
+}
+
+.learning-card {
+  width: 100%;
+  height: 112px;
+  background-color: #121A27;
+  border-radius: 8px;
+  padding: 9px;
+  margin-bottom: 5px;
+  flex-direction: column;
+}
+
+.learning-main {
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.learning-line {
+  color: #AAB5C7;
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+.ranking-text {
+  color: #6FE4D1;
+  font-size: 10px;
+  margin-top: 3px;
+}
+
+.ai-showcase-card {
+  width: 100%;
+  height: 84px;
+  background-color: #0D1521;
+  border-radius: 8px;
+  padding: 7px;
+  margin-bottom: 4px;
+  flex-direction: column;
+}
+
+.ai-showcase-title {
+  color: #6FE4D1;
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+.ai-showcase-row {
+  width: 100%;
+  height: 27px;
+  flex-direction: row;
+}
+
+.ai-showcase-cell {
+  width: 48%;
+  height: 25px;
+  background-color: #121A27;
+  border-radius: 6px;
+  margin-right: 4%;
+  padding: 3px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ai-showcase-cell-last {
+  margin-right: 0;
+}
+
+.ai-showcase-label {
+  color: #8FA1B9;
+  font-size: 7px;
+}
+
+.ai-showcase-value {
+  color: #FFFFFF;
+  font-size: 9px;
+  font-weight: bold;
+  margin-top: 1px;
+}
+
+
+.action-row {
+  width: 100%;
+  height: 66px;
+  flex-direction: row;
+  margin-top: 5px;
+}
+
+.compact-row {
+  height: 52px;
+}
+
+.runtime-action-btn {
+  width: 48%;
+  height: 52px;
+  border-radius: 7px;
+  margin-right: 4%;
+  padding: 6px 9px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.runtime-action-title {
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.runtime-action-sub {
+  color: #D3D9E3;
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.action-btn {
+  width: 48%;
+  height: 62px;
+  border-radius: 7px;
+  margin-right: 4%;
+  padding: 8px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.decision-action {
+  height: 42px;
+  padding: 5px;
+}
+
+.decision-action-title {
+  font-size: 12px;
+}
+
+.decision-action-sub {
+  font-size: 9px;
+  margin-top: 1px;
+}
+
+.action-title {
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.action-sub {
+  color: #D3D9E3;
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+.wide-btn {
+  width: 100%;
+  height: 40px;
+  background-color: #1E6D65;
+  border-radius: 7px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 7px;
+}
+
+.decision-wide-btn {
+  height: 27px;
+  margin-top: 4px;
+}
+
+.wide-text {
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.decision-wide-text {
+  font-size: 10px;
+}
+
+.back-tip {
+  width: 100%;
+  color: #778397;
+  font-size: 11px;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.orbit-stage {
+  width: 100%;
+  height: 158px;
+  background-color: #0D1521;
+  border-radius: 10px;
+  padding: 7px;
+  align-items: center;
+  flex-direction: column;
+}
+
+.selected-device-card {
+  width: 100%;
+  height: 82px;
+  background-color: #121A27;
+  border-radius: 10px;
+  padding: 6px;
+  align-items: center;
+  flex-direction: column;
+}
+
+.zone-pill {
+  color: #57D4C2;
+  font-size: 10px;
+}
+
+.device-name {
+  width: 100%;
+  color: #FFFFFF;
+  font-size: 21px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 1px;
+}
+
+.device-state {
+  width: 100%;
+  color: #DCE4F0;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 2px;
+}
+
+.device-action {
+  width: 100%;
+  color: #6FE4D1;
+  font-size: 10px;
+  text-align: center;
+  margin-top: 3px;
+}
+
+.device-index {
+  width: 100%;
+  color: #778397;
+  font-size: 11px;
+  text-align: center;
+  margin-top: 3px;
+}
+
+.orbit-row {
+  width: 100%;
+  height: 39px;
+  flex-direction: row;
+  margin-top: 6px;
+}
+
+.orbit-card {
+  width: 31%;
+  height: 36px;
+  border-radius: 7px;
+  margin-right: 3.5%;
+  padding: 4px;
+  background-color: #303B4B;
+  justify-content: center;
+  align-items: center;
+}
+
+.side-left {
+  background-color: #263244;
+}
+
+.side-mid {
+  background-color: #1E6570;
+}
+
+.side-right {
+  background-color: #263244;
+  margin-right: 0;
+}
+
+.orbit-name {
+  width: 100%;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.orbit-hint {
+  width: 100%;
+  color: #778397;
+  font-size: 8px;
+  text-align: center;
+  margin-top: 4px;
+}
+
+.info-strip {
+  width: 100%;
+  height: 47px;
+  background-color: #121A27;
+  border-radius: 7px;
+  padding: 7px 10px;
+  margin-top: 5px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.info-strip-main {
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.info-strip-sub {
+  color: #94A1B5;
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.device-action-row {
+  height: 48px;
+  margin-top: 5px;
+}
+
+.device-action-btn {
+  height: 46px;
+  padding: 5px;
+}
+
+.device-action-title {
+  font-size: 13px;
+}
+
+.device-action-sub {
+  font-size: 9px;
+  margin-top: 1px;
+}
+
+.device-bottom-tip {
+  width: 100%;
+  color: #778397;
+  font-size: 9px;
+  text-align: center;
+  margin-top: 4px;
+}
+
+
+.manage-current {
+  width: 100%;
+  height: 84px;
+  background-color: #121A27;
+  border-radius: 8px;
+  padding: 10px;
+  align-items: center;
+  flex-direction: column;
+}
+
+.action-config-card {
+  height: 74px;
+}
+
+.manage-name {
+  width: 100%;
+  color: #FFFFFF;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.manage-meta {
+  width: 100%;
+  color: #AAB5C7;
+  font-size: 11px;
+  text-align: center;
+  margin-top: 2px;
+}
+
+.manage-action {
+  width: 100%;
+  color: #6FE4D1;
+  font-size: 11px;
+  text-align: center;
+  margin-top: 3px;
+}
+
+.manage-message {
+  width: 100%;
+  height: 51px;
+  background-color: #172233;
+  border-radius: 7px;
+  padding: 8px 10px;
+  margin-top: 6px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.manage-message-main {
+  width: 100%;
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.manage-message-sub {
+  width: 100%;
+  color: #8F9DB1;
+  font-size: 10px;
+  text-align: center;
+  margin-top: 3px;
+}
+
+.manual-preview {
+  width: 100%;
+  height: 57px;
+  background-color: #101C2B;
+  border-radius: 7px;
+  padding: 7px 10px;
+  margin-top: 5px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.manual-preview-title {
+  color: #6FE4D1;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.manual-preview-line {
+  color: #D7DEE9;
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.inline-action-panel {
+  width: 100%;
+  height: 48px;
+  background-color: #101C2B;
+  border-radius: 7px;
+  padding: 6px 10px;
+  margin-top: 5px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.inline-action-title {
+  width: 100%;
+  color: #57D4C2;
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.inline-action-line {
+  width: 100%;
+  color: #FFFFFF;
+  font-size: 11px;
+  margin-top: 2px;
+  text-align: center;
+}
+
+.compact-header {
+  height: 44px;
+}
+
+.input-card {
+  width: 100%;
+  height: 68px;
+  background-color: #121A27;
+  border-radius: 8px;
+  padding: 8px 10px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.input-title {
+  color: #57D4C2;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.input-line {
+  width: 100%;
+  height: 25px;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 3px;
+}
+
+.input-value {
+  width: 100%;
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 3px;
+}
+
+.input-cursor {
+  width: 8%;
+  color: #6EE7F9;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.input-hint {
+  color: #94A1B5;
+  font-size: 10px;
+  margin-top: 3px;
+}
+
+.ime-compose {
+  width: 100%;
+  height: 24px;
+  flex-direction: row;
+  margin-top: 5px;
+  background-color: #0E1824;
+  border-radius: 6px;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.ime-label {
+  width: 36px;
+  color: #57D4C2;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.ime-buffer {
+  flex: 1;
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.candidate-row {
+  width: 100%;
+  flex-direction: row;
+  height: 30px;
+  margin-top: 4px;
+}
+
+.candidate-chip {
+  height: 28px;
+  margin-right: 1.5%;
+  border-radius: 6px;
+  background-color: #112D3B;
+  align-items: center;
+  justify-content: center;
+}
+
+.candidate-word {
+  width: 24%;
+}
+
+.candidate-arrow {
+  width: 10%;
+  background-color: #27465A;
+}
+
+.candidate-text {
+  width: 100%;
+  color: #F6FAFF;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.candidate-arrow-text {
+  width: 100%;
+  color: #9DE8FF;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.qwerty-row {
+  width: 100%;
+  height: 31px;
+  flex-direction: row;
+  margin-top: 4px;
+}
+
+.qwerty-row-mid {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.qwerty-row-last {
+  padding-left: 18px;
+}
+
+.qkey {
+  height: 29px;
+  margin-right: 1.2%;
+  border-radius: 6px;
+  background-color: #253247;
+  align-items: center;
+  justify-content: center;
+}
+
+.qkey-row1 {
+  width: 8.9%;
+}
+
+.qkey-row2 {
+  width: 9.7%;
+}
+
+.qkey-row3 {
+  width: 9.5%;
+}
+
+.qkey-back {
+  width: 19%;
+}
+
+.qwerty-action-row {
+  width: 100%;
+  height: 34px;
+  flex-direction: row;
+  margin-top: 5px;
+}
+
+.qkey-clear {
+  width: 18%;
+}
+
+.qkey-space {
+  width: 35%;
+  background-color: #314054;
+}
+
+.qkey-next {
+  width: 21%;
+  background-color: #1E5E8F;
+}
+
+.qkey-done {
+  width: 20%;
+  background-color: #1E6D65;
+}
+
+.qkey-text {
+  width: 100%;
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.last-key {
+  margin-right: 0;
+}
+
+
+
+.train-focus-card {
+  width: 100%;
+  height: 86px;
+  background-color: #121A27;
+  border-radius: 9px;
+  padding: 9px 10px;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.train-device-name {
+  width: 100%;
+  color: #FFFFFF;
+  font-size: 21px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.train-action-name {
+  width: 100%;
+  color: #6FE4D1;
+  font-size: 15px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 3px;
+}
+
+.train-action-command {
+  width: 100%;
+  color: #9BA8BC;
+  font-size: 10px;
+  text-align: center;
+  margin-top: 2px;
+}
+
+.train-progress-card {
+  width: 100%;
+  height: 82px;
+  background-color: #172233;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 6px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.train-progress-main {
+  width: 100%;
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.train-progress-sub {
+  width: 100%;
+  color: #AAB5C7;
+  font-size: 10px;
+  text-align: center;
+  margin-top: 4px;
+}
+
+.train-progress-hint {
+  width: 100%;
+  color: #6FE4D1;
+  font-size: 10px;
+  text-align: center;
+  margin-top: 4px;
+}
+
+.train-ranking-card {
+  width: 100%;
+  height: 38px;
+  background-color: #101C2B;
+  border-radius: 7px;
+  padding: 6px 8px;
+  margin-top: 6px;
+  justify-content: center;
+}
+
+.train-ranking-text {
+  width: 100%;
+  color: #DCE4F0;
+  font-size: 10px;
+  text-align: center;
+}
+
+.action-focus-card {
+  width: 100%;
+  height: 82px;
+  background-color: #121A27;
+  border-radius: 9px;
+  padding: 9px 10px;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.action-focus-name {
+  width: 100%;
+  color: #FFFFFF;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.action-focus-meta {
+  width: 100%;
+  color: #AAB5C7;
+  font-size: 11px;
+  text-align: center;
+  margin-top: 2px;
+}
+
+.action-focus-status {
+  width: 100%;
+  color: #6FE4D1;
+  font-size: 11px;
+  text-align: center;
+  margin-top: 3px;
+}
+
+.action-guide-card {
+  width: 100%;
+  height: 48px;
+  background-color: #172233;
+  border-radius: 8px;
+  padding: 7px 10px;
+  margin-top: 6px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.action-guide-main {
+  width: 100%;
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.action-guide-sub {
+  width: 100%;
+  color: #8F9DB1;
+  font-size: 10px;
+  text-align: center;
+  margin-top: 3px;
+}
+
+.manage-current-compact {
+  height: 76px;
+  padding: 8px 10px;
+}
+
+.compact-message {
+  height: 45px;
+  padding: 6px 10px;
+}
+
+.compact-preview {
+  height: 45px;
+}
+
+.danger-strip {
+  width: 100%;
+  height: 38px;
+  flex-direction: row;
+  margin-top: 6px;
+}
+
+.danger-chip {
+  width: 48%;
+  height: 36px;
+  margin-right: 4%;
+  border-radius: 7px;
+  background-color: #3A2630;
+  align-items: center;
+  justify-content: center;
+}
+
+.danger-chip-last {
+  margin-right: 0;
+}
+
+.danger-chip-text {
+  width: 100%;
+  color: #F0B6C2;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.subtle-wide-btn {
+  width: 100%;
+  height: 32px;
+  background-color: #263244;
+  border-radius: 7px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+.subtle-wide-text {
+  color: #D4DDEA;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.runtime-safety-card {
+  width: 100%;
+  height: 55px;
+  background-color: #172233;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-top: 6px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.runtime-safety-title {
+  width: 100%;
+  color: #6FE4D1;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.runtime-safety-detail {
+  width: 100%;
+  color: #AAB5C7;
+  font-size: 10px;
+  text-align: center;
+  margin-top: 3px;
+}
+
+
+.ok-key {
+  background-color: #1E6D65;
+}
+
+.metric-row {
+  width: 100%;
+  height: 89px;
+  flex-direction: row;
+  margin-top: 6px;
+}
+
+.metric-card {
+  width: 48%;
+  height: 86px;
+  background-color: #121A27;
+  border-radius: 8px;
+  margin-right: 4%;
+  padding: 10px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.metric-name {
+  color: #AAB5C7;
+  font-size: 12px;
+}
+
+.metric-value {
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 4px;
+}
+
+.metric-extra {
+  color: #6FE4D1;
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.info-card {
+  width: 100%;
+  background-color: #121A27;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 8px;
+  flex-direction: column;
+}
+
+.runtime-card {
+  height: 150px;
+  justify-content: center;
+}
+
+.info-main {
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.info-sub {
+  color: #94A1B5;
+  font-size: 12px;
+  margin-top: 7px;
+}
+</style>

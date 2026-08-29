@@ -1,0 +1,22 @@
+{
+    "name":  "wristspace",
+    "version":  "1.0.0",
+    "description":  "WristSpace openvela watch quickapp for spatial AIoT gesture control.",
+    "engines":  {
+                    "node":  "\u003e=8.10"
+                },
+    "scripts":  {
+                    "start":  "aiot start --watch",
+                    "demo":  "powershell -ExecutionPolicy Bypass -File ..\\..\\scripts\\run_aiot_demo.ps1",
+                    "demo:standalone":  "powershell -ExecutionPolicy Bypass -File ..\\..\\scripts\\run_aiot_demo_standalone.ps1",
+                    "build":  "aiot build --enable-jsc",
+                    "release":  "aiot release",
+                    "lint":  "eslint --format codeframe --fix --ext .ux,.js src/",
+                    "demo:rect":  "npm run build && powershell -ExecutionPolicy Bypass -File ..\\..\\scripts\\run_aiot_demo_rect.ps1",
+                    "demo:all":  "npm run build && powershell -ExecutionPolicy Bypass -File ..\\..\\scripts\\run_aiot_demo_all.ps1"
+                },
+    "devDependencies":  {
+                            "@aiot-toolkit/jsc":  "^1.0.3",
+                            "aiot-toolkit":  "^2.0.5"
+                        }
+}
