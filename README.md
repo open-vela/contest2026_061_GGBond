@@ -68,24 +68,17 @@ WristSpace/
 │  ├─ multimodal_ai.py               — EMG + IMU 特征提取、训练和识别逻辑
 │  ├─ aiot_config.json               — 设备、动作、当前候选设备和安全设置配置
 │  ├─ aiot_multimodal_models.json    — 采集样本、模型参数、阈值和训练状态
-│  └─ README.md                      — PC 上位机运行说明
 
 ├─ docs/                             — 项目文档
 │  ├─ AIOT_Report.docx               — 技术报告
-│  ├─ Intro.docx                     — 5 分钟视频介绍流程与逐字稿
 │  └─ images/                        — 报告截图、架构图和流程图
 
 ├─ scripts/                          — 辅助脚本
 │  ├─ run_aiot_demo_rect.ps1         — 启动矩形手表模拟器并部署快应用
 │  ├─ run_aiot_demo_standalone.ps1   — 独立启动手表端演示
-│  └─ tools/                         — 截图、报告生成或调试辅助脚本
+│  ├─ run_aiot_demo.ps1              — 启动矩形手表模拟器
+│  ├─ run_aiot_demo_all.ps1          — 同时启动手表端和PC端
 
-├─ logs/                             — AI Coding 日志
-│  ├─ conversation/                  — AI 协作过程记录
-│  ├─ build/                         — 构建和运行日志
-│  └─ debug/                         — 问题定位、修改记录和测试记录
-
-└─ README.md                         — 作品说明、运行方式和复现指南
 ```
 
 如果按当前本地工程路径对应，可以理解为：
