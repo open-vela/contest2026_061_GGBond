@@ -1,0 +1,14 @@
+node_modules/
+build/
+.temp/
+.tmp/
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+*.log
+*.tmp
+*.bak
+*.backup
+Thumbs.db
+.DS_Store
