@@ -1,0 +1,159 @@
+{
+  "devices": [
+    {
+      "id": "light",
+      "name": "客厅灯",
+      "type": "light",
+      "zone": "正前方"
+    },
+    {
+      "id": "ac",
+      "name": "空调",
+      "type": "ac",
+      "zone": "右前方"
+    },
+    {
+      "id": "curtain",
+      "name": "窗帘",
+      "type": "curtain",
+      "zone": "左前方"
+    },
+    {
+      "id": "speaker",
+      "name": "音箱",
+      "type": "speaker",
+      "zone": "右侧"
+    },
+    {
+      "id": "watch_dev_7",
+      "name": "冰箱",
+      "type": "fridge",
+      "zone": "厨房"
+    },
+    {
+      "id": "phone",
+      "name": "手机",
+      "type": "phone",
+      "zone": "随身"
+    }
+  ],
+  "actions": [
+    {
+      "id": "movie_scene",
+      "name": "观影场景",
+      "command": "flip_scene",
+      "description": "翻腕切换多设备场景",
+      "deviceId": "light",
+      "targetDeviceId": "light",
+      "deviceName": "客厅灯"
+    },
+    {
+      "id": "quick_freeze",
+      "name": "冰箱速冻",
+      "command": "fridge_quick_freeze",
+      "description": "冰箱进入速冻模式",
+      "deviceId": "fridge",
+      "targetDeviceId": "fridge",
+      "deviceName": "冰箱"
+    },
+    {
+      "id": "phone_power_on",
+      "name": "手机开启",
+      "command": "swing_up",
+      "description": "设备创建向导添加",
+      "deviceId": "phone",
+      "targetDeviceId": "phone",
+      "deviceName": "手机",
+      "commandAction": "power_on",
+      "triggerName": "上摆",
+      "triggerCommand": "swing_up",
+      "isCustomTrigger": false
+    },
+    {
+      "id": "phone_power_off",
+      "name": "手机关闭",
+      "command": "swing_down",
+      "description": "设备创建向导添加",
+      "deviceId": "phone",
+      "targetDeviceId": "phone",
+      "deviceName": "手机",
+      "commandAction": "power_off",
+      "triggerName": "下摆",
+      "triggerCommand": "swing_down",
+      "isCustomTrigger": false
+    },
+    {
+      "id": "watch_dev_7_power_on",
+      "name": "冰箱开启指令",
+      "command": "swing_up",
+      "commandAction": "power_on",
+      "triggerName": "上摆",
+      "triggerCommand": "swing_up",
+      "isCustomTrigger": false,
+      "description": "command-action binding",
+      "deviceId": "watch_dev_7",
+      "targetDeviceId": "watch_dev_7",
+      "deviceName": "冰箱"
+    },
+    {
+      "id": "watch_dev_7_power_off",
+      "name": "冰箱关闭指令",
+      "command": "swing_down",
+      "commandAction": "power_off",
+      "triggerName": "下摆",
+      "triggerCommand": "swing_down",
+      "isCustomTrigger": false,
+      "description": "command-action binding",
+      "deviceId": "watch_dev_7",
+      "targetDeviceId": "watch_dev_7",
+      "deviceName": "冰箱"
+    },
+    {
+      "id": "watch_dev_7_value_up",
+      "name": "冰箱调高指令",
+      "command": "rotate_cw",
+      "commandAction": "value_up",
+      "triggerName": "顺时针",
+      "triggerCommand": "rotate_cw",
+      "isCustomTrigger": false,
+      "description": "command-action binding",
+      "deviceId": "watch_dev_7",
+      "targetDeviceId": "watch_dev_7",
+      "deviceName": "冰箱"
+    },
+    {
+      "id": "watch_dev_7_value_down",
+      "name": "冰箱调低指令",
+      "command": "rotate_ccw",
+      "commandAction": "value_down",
+      "triggerName": "逆时针",
+      "triggerCommand": "rotate_ccw",
+      "isCustomTrigger": false,
+      "description": "command-action binding",
+      "deviceId": "watch_dev_7",
+      "targetDeviceId": "watch_dev_7",
+      "deviceName": "冰箱"
+    },
+    {
+      "id": "watch_dev_7_custom_command",
+      "name": "冰箱自定义指令",
+      "command": "custom_train_custom_command",
+      "commandAction": "custom_command",
+      "triggerName": "自定义动作",
+      "triggerCommand": "custom_train_custom_command",
+      "isCustomTrigger": true,
+      "description": "command-action binding",
+      "deviceId": "watch_dev_7",
+      "targetDeviceId": "watch_dev_7",
+      "deviceName": "冰箱"
+    }
+  ],
+  "deviceIndex": 0,
+  "configVersion": 21,
+  "settings": {
+    "safetyGuardEnabled": false,
+    "safetyThreshold": 80,
+    "operationMode": "demo"
+  },
+  "savedAt": 1787992776943
+}
