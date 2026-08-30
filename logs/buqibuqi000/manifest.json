@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "team_id": "contest2026_061_GGBond",
+  "github_login": "buqibuqi000",
+  "generator": "负责人",
+  "sessions": [
+    {
+      "session_id": "019f07e2-59ca-76a0-bb50-3c6a950e54d3",
+      "tool": "codex",
+      "started_at": "2026-06-27T07:02:57.798Z",
+      "last_event_at": "2026-08-23T14:20:19.310Z",
+      "event_count": 17026,
+      "file_path": "logs/buqibuqi000/2026-06-27/codex__019f07e2-59ca-76a0-bb50-3c6a950e54d3.jsonl",
+      "collection_mode": "codex-desktop",
+      "health": "ok"
+    }
+  ],
+  "updated_at": "2026-08-30T03:50:47.044941Z"
+}
